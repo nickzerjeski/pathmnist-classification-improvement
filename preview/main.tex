@@ -1,0 +1,40 @@
+\documentclass[aspectratio=169]{beamer}
+
+\usetheme{Rochester}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+\usepackage{url}
+
+\title[PathMNIST]{Improving PathMNIST Classification}
+\subtitle{Machine Learning Lab Project Proposal -- Format 4}
+\author{Nick Zerjeski}
+\institute{Free University of Bozen-Bolzano}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}{Improving PathMNIST Classification}
+  \begin{block}{Dataset}
+    \begin{itemize}
+      \item $\sim$110k colorectal cancer histology image patches from PathMNIST\textsuperscript{1}
+      \item 9 different tissue classes
+    \end{itemize}
+  \end{block}
+
+  \begin{alertblock}{Benchmark to Improve}
+    Official MedMNIST PathMNIST results report up to 0.990 AUC and 0.911 ACC with ResNet-50 at 28x28 resolution.
+  \end{alertblock}
+
+  \begin{exampleblock}{Goal}
+    Format 4: Improve effectiveness by combining learning models and training strategies
+  \end{exampleblock}
+
+  \vfill
+  {\scriptsize \textsuperscript{1}\url{https://medmnist.com/}}
+\end{frame}
+
+\end{document}
