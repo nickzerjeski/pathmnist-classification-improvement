@@ -143,3 +143,58 @@ reports/      final report material
 - MedMNIST GitHub repository: <https://github.com/MedMNIST/MedMNIST>
 - Yang, J. et al. "MedMNIST v2-A large-scale lightweight benchmark for 2D and 3D biomedical image classification." *Scientific Data*, 2023.
 - Yang, J., Shi, R., and Ni, B. "MedMNIST Classification Decathlon: A Lightweight AutoML Benchmark for Medical Image Analysis." *ISBI*, 2021.
+
+## Start here
+In this format, the focus would be on the results.
+In other words how to improve the results of a machine learning algorithm. This
+can be done at two levels. First, at the level of effectiveness, means how can
+you make the results more accurate. To address this problem, you can use
+some standard strategies, like bagging or boosting which involve the usage of
+several learning models. Alternatively, you can decide to combine several
+learning paradigms like supervised and unsupervised learning techniques. For
+example we can cluster the data and then run the supervised learning on each
+cluster to see the impact on the results. Second, at the level of efficiency. This
+can also be done by combining supervised and unsupervised techniques. For
+example if an algorithm runs slow on the whole dataset we can use clustering
+to find representative objects and then use only those objects as input for the
+algorithm. In this case, the work would be how to extend the results to all the
+objects on the original dataset. There are several options in this format
+which rely basically on the combination of several models. You will learn
+then the strategy that you should use to combine learning models. Again
+here the project should contain all 4 parts with the focus on the impact of
+the combination of learning models on the results.
+
+The expected outcome of the project is summarized as follows:
+1. A clear definition of the tasks to be achieved and the characteristics of the
+chosen dataset.
+2. A principled approach in all the parts of the project. All choices should be
+motivated. If the choice cannot be motivated at the beginning of the task, it
+should be followed by experiments that compare several alternatives.
+3. A project report (5-10 pages max)
+4. An oral presentation of 15/20 minutes where you describe all the work you
+have done.
+
+## Current Implementation Status
+
+Implemented:
+
+- reproducible PathMNIST loaders for 28x28 and MedMNIST+ sizes;
+- official metrics: macro one-vs-rest AUC and accuracy;
+- medical diagnostics: macro F1, confusion matrix, per-class report, and adenocarcinoma recall/precision;
+- trainable models: small CNN, torchvision ResNet-18/50, timm models, and CIFAR-style ResNet-18/50;
+- improvement strategies: histology-safe augmentation, MixUp, label smoothing, ImageNet transfer, higher-resolution training, cluster-feature baseline, and soft-voting ensembles.
+
+Best current result:
+
+| Method | Test AUC | Test ACC | Cancer recall |
+| --- | ---: | ---: | ---: |
+| Official listed ResNet-50 28x28 target | 0.990 | 0.911 | - |
+| 4-model soft-voting ensemble | 0.99156 | 0.92563 | 0.96188 |
+
+The current best ensemble improves over the listed benchmark by `+0.00156` AUC and `+0.01463` accuracy.
+
+See `reports/experiment_summary.md` for experiment details, failed hypotheses, and reproduction commands.
+
+For a detailed step-by-step explanation with mistakes and corrections, see `notebooks/pathmnist_pipeline_explanation.ipynb`.
+
+For dataset exploration and rough benchmark-style baseline recall, see `notebooks/pathmnist_dataset_and_baseline_recall.ipynb`.
