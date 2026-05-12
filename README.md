@@ -197,4 +197,4 @@ See `reports/experiment_summary.md` for experiment details, failed hypotheses, a
 
 For a detailed step-by-step explanation with mistakes and corrections, see `notebooks/pathmnist_pipeline_explanation.ipynb`.
 
-For dataset exploration and rough benchmark-style baseline recall, see `notebooks/pathmnist_dataset_and_baseline_recall.ipynb`.
+For dataset exploration and rough benchmark-style baseline recall, see `notebooks/exploration.ipynb`.
