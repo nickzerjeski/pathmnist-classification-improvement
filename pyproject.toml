@@ -1,0 +1,26 @@
+[project]
+name = "pathmnist-classification-improvement"
+version = "0.1.0"
+description = "Reproducible PathMNIST training, evaluation, ensembling, and recall-oriented experiments."
+requires-python = ">=3.11"
+dependencies = [
+  "matplotlib",
+  "medmnist",
+  "numpy",
+  "pandas",
+  "pillow",
+  "scikit-learn",
+  "timm",
+  "torch",
+  "torchvision",
+  "tqdm",
+]
+
+[project.optional-dependencies]
+notebook = [
+  "jupyter",
+  "nbformat",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

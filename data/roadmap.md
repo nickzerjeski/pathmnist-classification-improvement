@@ -2,8 +2,8 @@
 Before you start any of the tasks below, read the README.md. Furthermore,
 the following steps are already done. Use this checklist by yourself to
 track the progress of what is already done:
-- [ ] Step 1 — Recreate the Baseline
-- [ ] Step 2 — Specify the experimental design
+- [x] Step 1 — Recreate the Baseline
+- [x] Step 2 — Specify the experimental design
 - [ ] Step 3 — Run the experiments
 - [ ] Step 4 — Try to improve upon the F2 score.
 

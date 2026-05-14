@@ -60,3 +60,6 @@ Classes:
 | 6 | normal colon mucosa |
 | 7 | cancer-associated stroma |
 | 8 | colorectal adenocarcinoma epithelium |
+
+## Notes
+Interpretability of the models should also be included in the paper
