@@ -1,9 +1,6 @@
-.venv/
-data/
-results/
-*.pyc
-__pycache__/
-*.egg-info/
 .DS_Store
-output/
+.venv/
 .vscode/
+__pycache__/
+output/
+results/
