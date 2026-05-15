@@ -111,3 +111,40 @@ Classes:
 
 ## Notes
 Interpretability of the models should also be included in the paper
+
+## Approach 1: Cancer specialist override
+
+The selected multi-classifier approach combines:
+
+* the trained 9-class `28x28` baseline classifier
+* a separate binary cancer-vs-rest specialist
+* a validation-tuned specialist override threshold
+
+The baseline test cancer F2 is `0.9204304581770748`. Approach 1 improves
+test cancer F2 to `0.9458159666559794`.
+
+Reproduce approach 1 after the baseline artifacts exist:
+
+```bash
+PYTHONPATH=src python scripts/approach_01_cancer_vs_rest.py \
+  --epochs 10 \
+  --batch-size 512 \
+  --lr 0.0008 \
+  --weight-decay 0.0001 \
+  --label-smoothing 0.02 \
+  --mixup-alpha 0.05 \
+  --seed 1042 \
+  --workers 0 \
+  --device auto \
+  --data-root data
+```
+
+The main report notebook is
+`notebooks/approach_01_cancer_vs_rest_override.ipynb`. It explains the
+classifier combination, validation threshold tuning, final metrics, and
+artifact paths needed to reconstruct the result.
+
+The separate true-224 transfer-learning result in
+`results/bounded_224_resnet18_unweighted_threshold/metrics.json` reached
+test cancer F2 `0.9831053901850362`, but it is a single classifier plus
+thresholding, not the selected multi-classifier approach.
