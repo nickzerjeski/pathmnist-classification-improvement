@@ -35,9 +35,6 @@ have severe medical consequences. Consequently, optimizing metrics related to
 cancer detection performance, such as recall for the cancer class, is often more
 important than maximizing overall accuracy alone.
 
-%TODO: What is the proposed approach to solve this problem (multiple exerts for
-%different classes that get activated when model is not sure) Maybe here, maybe
-%somewhere else.
 \subsection{Dataset}
 To investigate these challenges, this work focuses on the classification of
 histopathological image patches using the
@@ -92,13 +89,29 @@ distributions can influence the measured performance on the test set.
 
 The distribution shown in Figure~\ref{fig:pathmnist-class-distribution} also
 motivates the choice of evaluation metrics. Since the aim of this work is to
-reliably identify the cancer class, overall accuracy alone is not sufficient. A
-model may achieve high accuracy while still missing a relevant number of
-cancerous samples, especially if errors are unevenly distributed across classes.
-For this reason, special attention is given to the classification performance
-for colorectal adenocarcinoma epithelium. In particular, recall-oriented metrics
-are important because false negatives, where cancerous tissue is classified as
-non-cancerous, are especially problematic in a medical context. This makes the
-dataset suitable for evaluating whether a classifier can not only perform well
-globally, but also prioritize the reliable detection of cancerous tissue.
+reliably identify cancer-related tissue, overall accuracy alone is not
+sufficient. A model may achieve high accuracy while still missing a relevant
+number of cancerous samples, especially if errors are unevenly distributed
+across classes. In this work, the primary cancer class is
+\textit{colorectal adenocarcinoma epithelium}, which represents malignant tumor
+tissue. In addition, \textit{cancer-associated stroma} is considered a relevant
+secondary class because it describes tissue associated with the tumor
+microenvironment. For this reason, special attention is given to the
+classification performance for these cancer-relevant classes.
 
+Instead of focusing primarily on accuracy, this work emphasizes the $F_2$ score
+for the relevant classes. The $F_2$ score belongs to the $F_\beta$ family of
+metrics, which combine precision and recall into a single evaluation measure and
+is defined as follows:
+$$ F_\beta = (1 + \beta^2) \cdot \frac{\text{precision} \cdot \text{recall}}{(\beta^2 \cdot \text{precision}) + \text{recall}} $$
+Therefore, $F_2$ weights recall more strongly than precision, which is
+particularly important in a medical context because false negatives, where
+cancerous tissue is classified as non-cancerous, can delay diagnosis and
+treatment. At the same time, the metric still incorporates precision, preventing
+the classifier from trivially assigning all samples to the cancer class.
+Consequently, the dataset is suitable for evaluating whether a classifier can
+not only perform well globally, but also reliably detect cancer-related tissue
+under a recall-oriented evaluation setting.
+
+% TODO: Which classes should be important to detect right? I mean there are
+% multiple classes related to cancer.

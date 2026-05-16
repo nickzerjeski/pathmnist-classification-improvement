@@ -2,3 +2,24 @@
 % Must also include:
 % Feature Selection: how features are chosen? in case a subset is chosen to
 % solve your task describe the model selection strategy
+\begin{itemize}
+    \item What do I try to maximize (or better on what do I wanto to improve
+    upon? e.g. f2 score of the baseline model.)
+    \item How am I doing it? (one example: running a cnn, when not sure about the class, run a expert that destinguishes between those two classes)
+\end{itemize}
+I think in this chapter I really want to tell a story. For that I will start
+with the baseline model and take a look at the confusion matrix to see where the
+model is struggling. Then I will try to find a way to improve the model on those
+classes with techniques that I have learned in the course and techniques that I
+have found in the literature. Especially going to try to improve on f2 on the
+cancer class itself but also try to look for some correlation between the
+classes themselves. Furthermore, if the model is not sure about a class, e.g.
+having a confidence < 0.9 then a second model will be used which is an expert on
+distinguishing between those two classes. This model will use the intermediate
+layers of the baseline model.
+
+I guess even further after training the baseline model and seeing where it
+struggles I have to talk about interpretability and try to find out why the
+model is struggling on those classes.
+
+When I use literature I need to cite the respective paper.
