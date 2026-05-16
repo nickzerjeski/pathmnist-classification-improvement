@@ -39,17 +39,66 @@ important than maximizing overall accuracy alone.
 %different classes that get activated when model is not sure) Maybe here, maybe
 %somewhere else.
 \subsection{Dataset}
-To investigate these challenges, this work focuses on the classification of histopathological image patches using the PathMNIST\footnote{https://medmnist.com/} dataset. The dataset contains microscopic image patches extracted from colorectal cancer histology slides and categorized into multiple tissue classes, including tumor tissue and several non-cancerous tissue types.
+To investigate these challenges, this work focuses on the classification of
+histopathological image patches using the
+PathMNIST\footnote{https://medmnist.com/} dataset. The dataset contains
+microscopic image patches extracted from colorectal cancer histology slides and
+categorized into multiple tissue classes, including tumor tissue and several
+non-cancerous tissue types.
 
-The complete dataset consists of 107,180 samples. These samples are divided into 89,996 training samples, 10,004 validation samples, and 7,180 test samples. The training set is used to fit the model parameters, the validation set is used during model selection and hyperparameter tuning, and the test set is reserved for the final evaluation. Each sample is available in two resolutions: a compact $28 \times 28$ pixel version and a higher-resolution $224 \times 224$ pixel version. The $28 \times 28$ version allows efficient experimentation with lightweight models, while the $224 \times 224$ version preserves more spatial detail and is therefore more suitable for deeper convolutional neural networks such as ResNet-based architectures.
+The complete dataset consists of 107,180 samples. These samples are divided into
+89,996 training samples, 10,004 validation samples, and 7,180 test samples. The
+training set is used to fit the model parameters, the validation set is used
+during model selection and hyperparameter tuning, and the test set is reserved
+for the final evaluation. Each sample is available in two resolutions: a compact
+$28 \times 28$ pixel version and a higher-resolution $224 \times 224$ pixel
+version. The $28 \times 28$ version allows efficient experimentation with
+lightweight models, while the $224 \times 224$ version preserves more spatial
+detail and is therefore more suitable for deeper convolutional neural networks
+such as ResNet-based architectures.
 
-PathMNIST contains nine tissue classes: adipose, background, debris, lymphocytes, mucus, smooth muscle, normal colon mucosa, cancer-associated stroma, and colorectal adenocarcinoma epithelium. Figure~\ref{fig:pathmnist-class-examples} shows one representative example image for each class. These classes cover both normal and pathological tissue structures. Adipose corresponds to fat tissue, while background denotes image regions without relevant tissue content. Debris describes unstructured tissue fragments or cellular remains. Lymphocytes are immune cells that may occur in the tumor microenvironment or surrounding tissue. Mucus refers to mucinous material, which can be present in colorectal tissue and certain tumor regions. Smooth muscle represents muscular tissue from the intestinal wall. Normal colon mucosa corresponds to healthy colon epithelial tissue with regular glandular structures. Cancer-associated stroma describes connective tissue associated with tumor growth and the tumor microenvironment. Finally, colorectal adenocarcinoma epithelium represents malignant epithelial tumor tissue and is therefore the main class of interest in this work.
+PathMNIST contains nine tissue classes: adipose, background, debris,
+lymphocytes, mucus, smooth muscle, normal colon mucosa, cancer-associated
+stroma, and colorectal adenocarcinoma epithelium.
+Figure~\ref{fig:pathmnist-class-examples} shows one representative example image
+for each class. These classes cover both normal and pathological tissue
+structures. Adipose corresponds to fat tissue, while background denotes image
+regions without relevant tissue content. Debris describes unstructured tissue
+fragments or cellular remains. Lymphocytes are immune cells that may occur in
+the tumor microenvironment or surrounding tissue. Mucus refers to mucinous
+material, which can be present in colorectal tissue and certain tumor regions.
+Smooth muscle represents muscular tissue from the intestinal wall. Normal colon
+mucosa corresponds to healthy colon epithelial tissue with regular glandular
+structures. Cancer-associated stroma describes connective tissue associated with
+tumor growth and the tumor microenvironment. Finally, colorectal adenocarcinoma
+epithelium represents malignant epithelial tumor tissue and is therefore the
+main class of interest in this work.
 
 \input{figures/pathmnist_class_examples_figure}
 
-The class distribution across the training, validation, and test splits is shown in Figure~\ref{fig:pathmnist-class-distribution}. The distribution is not perfectly uniform across all classes. In the training and validation sets, the largest class fractions are observed for smooth muscle and colorectal adenocarcinoma epithelium, while classes such as normal colon mucosa, mucus, and lymphocytes occur with slightly smaller but still substantial proportions. In contrast, the test split shows stronger deviations for some classes: adipose, mucus, and colorectal adenocarcinoma epithelium have comparatively higher fractions, whereas debris and cancer-associated stroma occur less frequently. This is relevant for model evaluation because differences between the split distributions can influence the measured performance on the test set.
+The class distribution across the training, validation, and test splits is shown
+in Figure~\ref{fig:pathmnist-class-distribution}. The distribution is not
+perfectly uniform across all classes. In the training and validation sets, the
+largest class fractions are observed for smooth muscle and colorectal
+adenocarcinoma epithelium, while classes such as normal colon mucosa, mucus, and
+lymphocytes occur with slightly smaller but still substantial proportions. In
+contrast, the test split shows stronger deviations for some classes: adipose,
+mucus, and colorectal adenocarcinoma epithelium have comparatively higher
+fractions, whereas debris and cancer-associated stroma occur less frequently.
+This is relevant for model evaluation because differences between the split
+distributions can influence the measured performance on the test set.
 
 \input{figures/pathmnist_class_distribution_figure}
 
-The distribution shown in Figure~\ref{fig:pathmnist-class-distribution} also motivates the choice of evaluation metrics. Since the aim of this work is to reliably identify the cancer class, overall accuracy alone is not sufficient. A model may achieve high accuracy while still missing a relevant number of cancerous samples, especially if errors are unevenly distributed across classes. For this reason, special attention is given to the classification performance for colorectal adenocarcinoma epithelium. In particular, recall-oriented metrics are important because false negatives, where cancerous tissue is classified as non-cancerous, are especially problematic in a medical context. This makes the dataset suitable for evaluating whether a classifier can not only perform well globally, but also prioritize the reliable detection of cancerous tissue.
+The distribution shown in Figure~\ref{fig:pathmnist-class-distribution} also
+motivates the choice of evaluation metrics. Since the aim of this work is to
+reliably identify the cancer class, overall accuracy alone is not sufficient. A
+model may achieve high accuracy while still missing a relevant number of
+cancerous samples, especially if errors are unevenly distributed across classes.
+For this reason, special attention is given to the classification performance
+for colorectal adenocarcinoma epithelium. In particular, recall-oriented metrics
+are important because false negatives, where cancerous tissue is classified as
+non-cancerous, are especially problematic in a medical context. This makes the
+dataset suitable for evaluating whether a classifier can not only perform well
+globally, but also prioritize the reliable detection of cancerous tissue.
 
