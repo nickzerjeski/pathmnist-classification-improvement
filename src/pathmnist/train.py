@@ -68,7 +68,7 @@ def train_one_epoch(
     log_every_batches: int,
 ) -> float:
     model.train()
-    total_loss = 0.0
+    total_loss = torch.zeros((), device=device)
     seen = 0
     optimizer.zero_grad(set_to_none=True)
     for batch_idx, (x, y) in enumerate(tqdm(loader, desc="train", leave=False, disable=not progress), start=1):
@@ -84,14 +84,14 @@ def train_one_epoch(
         if batch_idx % grad_accum_steps == 0:
             optimizer.step()
             optimizer.zero_grad(set_to_none=True)
-        total_loss += float(raw_loss.detach().cpu()) * x.size(0)
+        total_loss = total_loss + raw_loss.detach() * x.size(0)
         seen += x.size(0)
         if log_every_batches and batch_idx % log_every_batches == 0:
-            print(json.dumps({"batch": batch_idx, "seen": seen, "train_loss_running": total_loss / seen}), flush=True)
+            print(json.dumps({"batch": batch_idx, "seen": seen, "train_loss_running": float(total_loss.item()) / seen}), flush=True)
     if seen and batch_idx % grad_accum_steps != 0:
         optimizer.step()
         optimizer.zero_grad(set_to_none=True)
-    return total_loss / max(seen, 1)
+    return float(total_loss.item()) / max(seen, 1)
 
 
 @torch.inference_mode()

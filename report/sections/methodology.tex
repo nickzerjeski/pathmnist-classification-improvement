@@ -3,6 +3,16 @@
 % Feature Selection: how features are chosen? in case a subset is chosen to
 % solve your task describe the model selection strategy
 \begin{itemize}
+    \item Introduce a baseline model
+    \item Naively train it on the data and see how it performs (confusion matrix, f2 score overall and for both relevant classes, etc.)
+    \item For the class cancer associated stroma the f2 score is very low. How confident is the model about its predictions?
+    Could we here maybe implement a second model that is an expert on distinguishing between the two classes that are often confused? (e.g. if the confidence of the baseline model is < 0.9 then run the second model)
+    \item Check the interpretability of the model and see where it struggles
+    so I want to know which layers identify which features of the images and I want
+    it to be visualized. In the research there were some papers where different
+    regions of the image were highlighted in different colors to show which regions were important for the model
+    but be broader than that I want to know which layers identify which features of the images and I want it to be visualized.
+        
     \item What do I try to maximize (or better on what do I wanto to improve
     upon? e.g. f2 score of the baseline model.)
     \item How am I doing it? (one example: running a cnn, when not sure about the class, run a expert that destinguishes between those two classes)
