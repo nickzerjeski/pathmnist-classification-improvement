@@ -256,7 +256,7 @@ def render_figure(
     base = Image.fromarray((np.clip(image, 0, 1) * 255).astype(np.uint8))
     panels = [panel_with_title(base, "Input image")]
     for name, cam in cams.items():
-        if "Heatmap" in name:
+        if "heatmap" in name.lower():
             rendered = heatmap_image(cam)
         else:
             rendered = overlay_image(image, cam)
@@ -327,7 +327,10 @@ def main() -> None:
         cams["Ablation CAM"] = blur_cam(ablate_cam, 2.0)
     render_figure(image, cams, target_name, probability, args.sample_index, Path(args.comparison_out))
 
-    selected = {"Tissue-region overlay": cams["Region overlay"]}
+    selected = {
+        "Grad-CAM heatmap": cams["Region overlay"],
+        "Tissue-region overlay": cams["Region overlay"],
+    }
     render_figure(image, selected, target_name, probability, args.sample_index, Path(args.out))
     print(
         json.dumps(
