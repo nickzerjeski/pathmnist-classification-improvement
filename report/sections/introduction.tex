@@ -113,5 +113,42 @@ Consequently, the dataset is suitable for evaluating whether a classifier can
 not only perform well globally, but also reliably detect cancer-related tissue
 under a recall-oriented evaluation setting.
 
-% TODO: Which classes should be important to detect right? I mean there are
-% multiple classes related to cancer.
+\subsection{Baseline}
+As a baseline for this work, the official benchmark results reported in the
+MedMNIST paper are used. In particular, the benchmark performance of a
+ResNet-50 architecture on the PathMNIST dataset serves as the primary reference
+point. ResNet-50 is a deep convolutional neural network that introduces residual
+connections to enable the stable training of very deep architectures and has
+become a widely used baseline model for image classification tasks.
+
+The official MedMNIST benchmark evaluates ResNet-50 on both the
+$28 \times 28$ and the $224 \times 224$ versions of the PathMNIST dataset.
+Interestingly, the reported benchmark results show that the smaller
+$28 \times 28$ version slightly outperforms the higher-resolution variant in
+terms of both AUC and overall accuracy. More specifically, the benchmark reports
+an AUC of $0.990$ and an accuracy of $0.911$ for the $28 \times 28$ version,
+compared to an AUC of $0.989$ and an accuracy of $0.892$ for the
+$224 \times 224$ version. For this reason, the ResNet-50 benchmark on the
+$28 \times 28$ dataset is used as the primary baseline throughout this work.
+
+However, the official benchmark only reports the metrics AUC and accuracy.
+Since the main objective of this work is the reliable detection of
+cancer-related tissue, additional evaluation metrics are required.
+To obtain these additional baseline metrics, the official prediction outputs of
+the benchmark ResNet-50 model are evaluated on the PathMNIST test set. The
+prediction scores are converted into class predictions by selecting the class
+with the highest predicted probability for each sample. Based on these predicted
+labels and the corresponding ground-truth labels of the test set, several
+additional metrics are computed as shown in Table~\ref{tab:baseline-metrics}.
+\input{tables/baseline_metrics}
+
+To get a more detailed understanding of the model's performance, we also compute
+the confusion matrix for the ResNet-50 benchmark model on the test set, which
+can be seen in Figure~\ref{fig:resnet50-28-confusion-matrix}.
+
+\input{figures/resnet50_28_confusion_matrix_figure}
+
+These metrics are used to later evaluate the performance of the model developed
+in this work. In particular, they provide a reference point for determining
+whether the proposed approach improves the detection of cancer-related tissue
+compared to the established ResNet-50 baseline.
