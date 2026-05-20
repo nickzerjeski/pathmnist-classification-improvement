@@ -142,9 +142,18 @@ labels and the corresponding ground-truth labels of the test set, several
 additional metrics are computed as shown in Table~\ref{tab:baseline-metrics}.
 \input{tables/baseline_metrics}
 
+There you can see that the ResNet-50 benchmark model achieves an $F_2$ score of
+$0.961$ for the primary cancer class and an $F_2$ score of $0.592$ for the
+secondary cancer class. These metrics indicate that the ResNet-50 benchmark
+model already performs quite well for the primary cancer class, but lacks
+meaningful identification of the secondary cancer class.
+
 To get a more detailed understanding of the model's performance, we also compute
 the confusion matrix for the ResNet-50 benchmark model on the test set, which
-can be seen in Figure~\ref{fig:resnet50-28-confusion-matrix}.
+can be seen in Figure~\ref{fig:resnet50-28-confusion-matrix}. There we can see
+that the model achieves a low performance for the secondary cancer class,
+because it often confuses cancer-associated stroma with the debris, smooth
+muscle and colorectal adenocarcinoma epithelium classes.
 
 \input{figures/resnet50_28_confusion_matrix_figure}
 
