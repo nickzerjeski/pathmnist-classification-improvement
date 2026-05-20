@@ -284,12 +284,90 @@ def render_figure(
         raise ValueError(f"Unsupported output format: {out_path.suffix}")
 
 
+def selected_cams(model: nn.Module, layer: nn.Module, x: torch.Tensor, image: np.ndarray, target_class: int) -> dict[str, torch.Tensor]:
+    tta_cam = upsample_cam(tta_gradcam(model, layer, x, target_class), image.shape[:2])
+    region = region_cam(tta_cam, image)
+    return {
+        "Grad-CAM heatmap": region,
+        "Tissue-region overlay": region,
+    }
+
+
+def selected_panels(image: np.ndarray, cams: dict[str, torch.Tensor], group_title: str) -> list[Image.Image]:
+    base = Image.fromarray((np.clip(image, 0, 1) * 255).astype(np.uint8))
+    panels = [panel_with_title(base, "Input image")]
+    for name, cam in cams.items():
+        rendered = heatmap_image(cam) if "heatmap" in name.lower() else overlay_image(image, cam)
+        panels.append(panel_with_title(rendered, name))
+
+    group_height = 28
+    group_width = sum(panel.width for panel in panels) + 14 * (len(panels) - 1)
+    header = Image.new("RGB", (group_width, group_height), "white")
+    draw = ImageDraw.Draw(header)
+    font = ImageFont.load_default()
+    text_width = draw.textlength(group_title, font=font)
+    draw.text(((group_width - text_width) / 2, 8), group_title, fill=(20, 20, 20), font=font)
+    return [header, *panels]
+
+
+def render_pair_figure(
+    left_image: np.ndarray,
+    left_cams: dict[str, torch.Tensor],
+    left_title: str,
+    right_image: np.ndarray,
+    right_cams: dict[str, torch.Tensor],
+    right_title: str,
+    out_path: Path,
+) -> None:
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    gap = 14
+    group_gap = 44
+    title_height = 28
+    left_panels = selected_panels(left_image, left_cams, left_title)
+    right_panels = selected_panels(right_image, right_cams, right_title)
+    left_header, left_body = left_panels[0], left_panels[1:]
+    right_header, right_body = right_panels[0], right_panels[1:]
+
+    left_width = left_header.width
+    right_width = right_header.width
+    body_height = max(panel.height for panel in [*left_body, *right_body])
+    width = left_width + group_gap + right_width
+    height = title_height + body_height
+    canvas = Image.new("RGB", (width, height), "white")
+
+    canvas.paste(left_header, (0, 0))
+    canvas.paste(right_header, (left_width + group_gap, 0))
+
+    x_offset = 0
+    for panel in left_body:
+        canvas.paste(panel, (x_offset, title_height))
+        x_offset += panel.width + gap
+
+    x_offset = left_width + group_gap
+    for panel in right_body:
+        canvas.paste(panel, (x_offset, title_height))
+        x_offset += panel.width + gap
+
+    if out_path.suffix.lower() == ".png":
+        canvas.save(out_path)
+    elif out_path.suffix.lower() == ".svg":
+        with tempfile.TemporaryDirectory() as tmpdir:
+            png_path = Path(tmpdir) / f"{out_path.stem}.png"
+            canvas.save(png_path)
+            save_svg_from_png(png_path, out_path)
+    else:
+        raise ValueError(f"Unsupported output format: {out_path.suffix}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", default="models/baseline_224/best.pt")
     parser.add_argument("--sample-index", type=int, default=5754)
     parser.add_argument("--target-class", type=int, default=DEFAULT_TARGET_CLASS)
     parser.add_argument("--out", default="report/figures/baseline224_cancer_gradcam.svg")
+    parser.add_argument("--pair-out", default=None)
+    parser.add_argument("--stroma-index", type=int, default=633)
+    parser.add_argument("--stroma-class", type=int, default=7)
     parser.add_argument("--comparison-out", default="results/baseline_224/baseline224_cancer_gradcam_variants.png")
     parser.add_argument("--data", default="data/pathmnist_224.npz")
     parser.add_argument("--layer-index", type=int, default=None)
@@ -305,6 +383,36 @@ def main() -> None:
     model.load_state_dict(checkpoint["model"])
     model.eval()
     layer = find_layer(model, args.layer_index)
+
+    if args.pair_out is not None:
+        stroma_x, stroma_y = load_test_sample(args.data, args.stroma_index, device)
+        stroma_image = denormalize(stroma_x[0])
+        cancer_x, cancer_y = load_test_sample(args.data, args.sample_index, device)
+        cancer_image = denormalize(cancer_x[0])
+        render_pair_figure(
+            stroma_image,
+            selected_cams(model, layer, stroma_x, stroma_image, args.stroma_class),
+            "Cancer-associated stroma",
+            cancer_image,
+            selected_cams(model, layer, cancer_x, cancer_image, args.target_class),
+            "Colorectal adenocarcinoma epithelium",
+            Path(args.pair_out),
+        )
+        print(
+            json.dumps(
+                {
+                    "stroma_index": args.stroma_index,
+                    "stroma_true_label": stroma_y,
+                    "stroma_target_class": args.stroma_class,
+                    "cancer_index": args.sample_index,
+                    "cancer_true_label": cancer_y,
+                    "cancer_target_class": args.target_class,
+                    "selected": args.pair_out,
+                },
+                indent=2,
+            )
+        )
+        return
 
     x, y = load_test_sample(args.data, args.sample_index, device)
     image = denormalize(x[0])
@@ -329,10 +437,7 @@ def main() -> None:
         cams["Ablation CAM"] = blur_cam(ablate_cam, 2.0)
     render_figure(image, cams, target_name, probability, args.sample_index, Path(args.comparison_out))
 
-    selected = {
-        "Grad-CAM heatmap": cams["Region overlay"],
-        "Tissue-region overlay": cams["Region overlay"],
-    }
+    selected = selected_cams(model, layer, x, image, args.target_class)
     render_figure(image, selected, target_name, probability, args.sample_index, Path(args.out))
     print(
         json.dumps(
