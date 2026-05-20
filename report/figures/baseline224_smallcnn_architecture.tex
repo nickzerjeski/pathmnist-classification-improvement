@@ -1,0 +1,35 @@
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        node distance=0.55cm,
+        block/.style={
+            draw,
+            rounded corners,
+            align=center,
+            minimum width=2.3cm,
+            minimum height=0.85cm,
+            font=\small
+        },
+        arrow/.style={-{Latex[length=2mm]}, thick}
+    ]
+        \node[block] (input) {Input\\$224 \times 224 \times 3$};
+        \node[block, right=of input] (conv1) {Conv block 1\\$3 \rightarrow 64 \rightarrow 64$};
+        \node[block, right=of conv1] (pool1) {Max pool\\$112 \times 112$};
+        \node[block, right=of pool1] (conv2) {Conv block 2\\$64 \rightarrow 128 \rightarrow 128$};
+        \node[block, below=of conv2] (pool2) {Max pool\\$56 \times 56$};
+        \node[block, left=of pool2] (conv3) {Conv block 3\\$128 \rightarrow 256$};
+        \node[block, left=of conv3] (gap) {Adaptive\\average pool};
+        \node[block, left=of gap] (head) {Dropout $0.2$\\Linear $256 \rightarrow 9$};
+
+        \draw[arrow] (input) -- (conv1);
+        \draw[arrow] (conv1) -- (pool1);
+        \draw[arrow] (pool1) -- (conv2);
+        \draw[arrow] (conv2) -- (pool2);
+        \draw[arrow] (pool2) -- (conv3);
+        \draw[arrow] (conv3) -- (gap);
+        \draw[arrow] (gap) -- (head);
+    \end{tikzpicture}
+    \caption{Architecture of the standalone $224 \times 224$ baseline CNN.
+    Each convolution is followed by batch normalization and a SiLU activation.}
+    \label{fig:baseline224-smallcnn-architecture}
+\end{figure}

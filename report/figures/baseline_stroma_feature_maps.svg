@@ -1517,4 +1517,12 @@ z
    <rect x="697.371429" y="428.657581" width="152.228571" height="152.228571"/>
   </clipPath>
  </defs>
+ <g id="codex_stroma_feature_map_label_cleanup">
+  <rect x="205" y="39" width="646" height="31" fill="#ffffff"/>
+  <rect x="205" y="216" width="646" height="31" fill="#ffffff"/>
+  <rect x="205" y="393" width="646" height="31" fill="#ffffff"/>
+  <text x="529" y="55" text-anchor="middle" dominant-baseline="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="9" fill="#000000">Convolutional layer 1</text>
+  <text x="529" y="232" text-anchor="middle" dominant-baseline="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="9" fill="#000000">Convolutional layer 2</text>
+  <text x="529" y="409" text-anchor="middle" dominant-baseline="middle" font-family="DejaVu Sans, Arial, sans-serif" font-size="9" fill="#000000">Convolutional layer 3</text>
+ </g>
 </svg>

@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import base64
 import json
+import tempfile
 import zipfile
 from pathlib import Path
 
@@ -17,7 +18,7 @@ from pathmnist.data import PATHMNIST_MEAN, PATHMNIST_STD, dataset_meta
 from pathmnist.models import build_model
 
 
-CANCER_CLASS = 8
+DEFAULT_TARGET_CLASS = 8
 
 
 def denormalize(x: torch.Tensor) -> np.ndarray:
@@ -262,9 +263,8 @@ def render_figure(
             rendered = overlay_image(image, cam)
         panels.append(panel_with_title(rendered, name))
 
-    caption = f"{target_name}; p={probability:.3f}; sample index {sample_index}"
     gap = 14
-    caption_height = 30
+    caption_height = 0
     width = sum(panel.width for panel in panels) + gap * (len(panels) - 1)
     height = max(panel.height for panel in panels) + caption_height
     canvas = Image.new("RGB", (width, height), "white")
@@ -272,23 +272,25 @@ def render_figure(
     for panel in panels:
         canvas.paste(panel, (x_offset, caption_height))
         x_offset += panel.width + gap
-    draw = ImageDraw.Draw(canvas)
-    font = ImageFont.load_default()
-    text_width = draw.textlength(caption, font=font)
-    draw.text(((width - text_width) / 2, 9), caption, fill=(20, 20, 20), font=font)
 
-    png_path = out_path if out_path.suffix.lower() == ".png" else out_path.with_suffix(".png")
-    canvas.save(png_path)
-    if out_path.suffix.lower() == ".svg":
-        save_svg_from_png(png_path, out_path)
+    if out_path.suffix.lower() == ".png":
+        canvas.save(out_path)
+    elif out_path.suffix.lower() == ".svg":
+        with tempfile.TemporaryDirectory() as tmpdir:
+            png_path = Path(tmpdir) / f"{out_path.stem}.png"
+            canvas.save(png_path)
+            save_svg_from_png(png_path, out_path)
+    else:
+        raise ValueError(f"Unsupported output format: {out_path.suffix}")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", default="models/baseline_224/best.pt")
     parser.add_argument("--sample-index", type=int, default=5754)
+    parser.add_argument("--target-class", type=int, default=DEFAULT_TARGET_CLASS)
     parser.add_argument("--out", default="report/figures/baseline224_cancer_gradcam.svg")
-    parser.add_argument("--comparison-out", default="report/figures/baseline224_cancer_gradcam_variants.png")
+    parser.add_argument("--comparison-out", default="results/baseline_224/baseline224_cancer_gradcam_variants.png")
     parser.add_argument("--data", default="data/pathmnist_224.npz")
     parser.add_argument("--layer-index", type=int, default=None)
     parser.add_argument("--skip-ablation", action="store_true")
@@ -309,13 +311,13 @@ def main() -> None:
 
     with torch.no_grad():
         probs = model(x).softmax(dim=1)[0]
-    probability = probs[CANCER_CLASS].item()
-    target_name = meta.class_names[CANCER_CLASS]
+    probability = probs[args.target_class].item()
+    target_name = meta.class_names[args.target_class]
 
-    raw_cam = upsample_cam(gradcam(model, layer, x, CANCER_CLASS, plus_plus=False), image.shape[:2])
-    plus_cam = upsample_cam(gradcam(model, layer, x, CANCER_CLASS, plus_plus=True), image.shape[:2])
-    tta_cam = upsample_cam(tta_gradcam(model, layer, x, CANCER_CLASS), image.shape[:2])
-    ablate_cam = None if args.skip_ablation else upsample_cam(ablation_cam(model, layer, x, CANCER_CLASS), image.shape[:2])
+    raw_cam = upsample_cam(gradcam(model, layer, x, args.target_class, plus_plus=False), image.shape[:2])
+    plus_cam = upsample_cam(gradcam(model, layer, x, args.target_class, plus_plus=True), image.shape[:2])
+    tta_cam = upsample_cam(tta_gradcam(model, layer, x, args.target_class), image.shape[:2])
+    ablate_cam = None if args.skip_ablation else upsample_cam(ablation_cam(model, layer, x, args.target_class), image.shape[:2])
 
     cams = {
         "Logit Grad-CAM": blur_cam(raw_cam, 1.5),
@@ -337,7 +339,7 @@ def main() -> None:
             {
                 "sample_index": args.sample_index,
                 "true_label": y,
-                "target_class": CANCER_CLASS,
+                "target_class": args.target_class,
                 "target_probability": probability,
                 "comparison": args.comparison_out,
                 "selected": args.out,
