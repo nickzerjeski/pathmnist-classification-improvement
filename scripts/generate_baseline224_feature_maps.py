@@ -69,53 +69,85 @@ def select_top_channels(activation: torch.Tensor, top_k: int) -> list[int]:
     return torch.topk(scores, k=min(top_k, maps.shape[0])).indices.tolist()
 
 
-def plot_feature_maps(
+def feature_bundle(model: torch.nn.Module, dataset, sample_index: int) -> dict:
+    x, y = dataset[sample_index]
+    activations, probabilities = capture_activations(model, x.unsqueeze(0))
+    return {
+        "image": denormalize(x),
+        "label": int(np.asarray(y).reshape(-1)[0]),
+        "activations": activations,
+        "probabilities": probabilities,
+    }
+
+
+def add_feature_maps(fig, grid, row: int, start_col: int, bundle: dict, layer_label: str, top_k: int) -> None:
+    activation = bundle["activations"][layer_label].squeeze(0)
+    channel_indices = select_top_channels(activation.unsqueeze(0), top_k)
+    for offset, channel in enumerate(channel_indices):
+        ax = fig.add_subplot(grid[row, start_col + offset])
+        feature_map = activation[channel].numpy()
+        ax.imshow(feature_map, cmap="viridis")
+        ax.set_xticks([])
+        ax.set_yticks([])
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+        ax.set_title(f"ch {channel}", fontsize=7.5, pad=2)
+
+
+def plot_combined_feature_maps(
     *,
     model: torch.nn.Module,
     dataset,
-    sample_index: int,
-    target_class: int,
+    stroma_index: int,
+    cancer_index: int,
     output_path: Path,
-    title: str,
     top_k: int,
 ) -> None:
-    meta = dataset_meta()
-    x, y = dataset[sample_index]
-    y_int = int(np.asarray(y).reshape(-1)[0])
-    x_batch = x.unsqueeze(0)
-    image = denormalize(x)
-    activations, probabilities = capture_activations(model, x_batch)
-    pred_class = int(np.argmax(probabilities))
+    stroma = feature_bundle(model, dataset, stroma_index)
+    cancer = feature_bundle(model, dataset, cancer_index)
+    separator_col = 2 + top_k
 
-    fig = plt.figure(figsize=(13.8, 7.6), constrained_layout=False)
+    fig = plt.figure(figsize=(18.8, 7.6), constrained_layout=False)
     grid = fig.add_gridspec(
-        nrows=3,
-        ncols=top_k + 2,
-        width_ratios=[1.15, 1.05, *([1.0] * top_k)],
-        wspace=0.10,
+        nrows=4,
+        ncols=2 * top_k + 3,
+        height_ratios=[0.16, 1.0, 1.0, 1.0],
+        width_ratios=[1.18, 1.05, *([1.0] * top_k), 0.28, *([1.0] * top_k)],
+        wspace=0.08,
         hspace=0.18,
     )
 
-    input_ax = fig.add_subplot(grid[:, 0])
-    input_ax.imshow(image)
-    input_ax.axis("off")
-    input_ax.set_title("Input patch", fontsize=8.5, pad=6)
+    input_grid = grid[1:, 0].subgridspec(2, 1, hspace=0.22)
+    for input_row, (bundle, title) in enumerate(
+        [
+            (stroma, "Cancer-associated stroma"),
+            (cancer, "Adenocarcinoma epithelium"),
+        ]
+    ):
+        ax = fig.add_subplot(input_grid[input_row, 0])
+        ax.imshow(bundle["image"])
+        ax.set_xticks([])
+        ax.set_yticks([])
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+        ax.set_title(title, fontsize=8.5, pad=4)
 
-    for row, (layer_label, _layer_index) in enumerate(LAYER_SPECS):
-        activation = activations[layer_label].squeeze(0)
-        channel_indices = select_top_channels(activation.unsqueeze(0), top_k)
-        label_ax = fig.add_subplot(grid[row, 1])
+    stroma_header = fig.add_subplot(grid[0, 2 : 2 + top_k])
+    stroma_header.axis("off")
+    stroma_header.text(0.5, 0.25, "Cancer-associated stroma", ha="center", va="center", fontsize=9)
+
+    cancer_header = fig.add_subplot(grid[0, separator_col + 1 : separator_col + 1 + top_k])
+    cancer_header.axis("off")
+    cancer_header.text(0.5, 0.25, "Colorectal adenocarcinoma epithelium", ha="center", va="center", fontsize=9)
+
+    for row_offset, (layer_label, _layer_index) in enumerate(LAYER_SPECS, start=1):
+        label_ax = fig.add_subplot(grid[row_offset, 1])
         label_ax.axis("off")
         label_ax.text(0.5, 0.5, layer_label, ha="center", va="center", fontsize=9, clip_on=False)
-        for col, channel in enumerate(channel_indices, start=2):
-            ax = fig.add_subplot(grid[row, col])
-            feature_map = activation[channel].numpy()
-            ax.imshow(feature_map, cmap="viridis")
-            ax.set_xticks([])
-            ax.set_yticks([])
-            for spine in ax.spines.values():
-                spine.set_visible(False)
-            ax.set_title(f"ch {channel}", fontsize=8, pad=3)
+        add_feature_maps(fig, grid, row_offset, 2, stroma, layer_label, top_k)
+        spacer_ax = fig.add_subplot(grid[row_offset, separator_col])
+        spacer_ax.axis("off")
+        add_feature_maps(fig, grid, row_offset, separator_col + 1, cancer, layer_label, top_k)
 
     fig.savefig(output_path, format="svg", bbox_inches="tight")
     plt.close(fig)
@@ -140,8 +172,7 @@ def main() -> None:
     parser.add_argument("--cancer-index", type=int, default=5754)
     parser.add_argument("--stroma-index", type=int, default=None)
     parser.add_argument("--top-k", type=int, default=4)
-    parser.add_argument("--cancer-out", type=Path, default=PROJECT_ROOT / "report/figures/baseline224_cancer_feature_maps.svg")
-    parser.add_argument("--stroma-out", type=Path, default=PROJECT_ROOT / "report/figures/baseline224_stroma_feature_maps.svg")
+    parser.add_argument("--out", type=Path, default=PROJECT_ROOT / "report/figures/baseline224_cancer_feature_maps.svg")
     args = parser.parse_args()
 
     cancer_class = 8
@@ -160,25 +191,14 @@ def main() -> None:
         norm="pathmnist",
     )
 
-    args.cancer_out.parent.mkdir(parents=True, exist_ok=True)
-    args.stroma_out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.parent.mkdir(parents=True, exist_ok=True)
 
-    plot_feature_maps(
+    plot_combined_feature_maps(
         model=model,
         dataset=dataset,
-        sample_index=args.cancer_index,
-        target_class=cancer_class,
-        output_path=args.cancer_out,
-        title="Baseline 224 feature maps for colorectal adenocarcinoma epithelium",
-        top_k=args.top_k,
-    )
-    plot_feature_maps(
-        model=model,
-        dataset=dataset,
-        sample_index=stroma_index,
-        target_class=stroma_class,
-        output_path=args.stroma_out,
-        title="Baseline 224 feature maps for cancer-associated stroma",
+        stroma_index=stroma_index,
+        cancer_index=args.cancer_index,
+        output_path=args.out,
         top_k=args.top_k,
     )
     print(f"cancer_index={args.cancer_index}")
