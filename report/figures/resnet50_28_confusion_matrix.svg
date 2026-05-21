@@ -2059,7 +2059,7 @@ z
      <use xlink:href="#DejaVuSans-32" transform="translate(190.869141 0)"/>
     </g>
    </g>
-   <g id="text_102">
+   <g id="text_102" style="display: none">
     <!-- Official ResNet-50 PathMNIST Test Confusion Matrix -->
     <g transform="translate(140.109673 16.318125) scale(0.12 -0.12)">
      <defs>
