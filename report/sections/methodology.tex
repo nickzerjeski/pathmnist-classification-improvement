@@ -114,12 +114,47 @@ learned representation for adenocarcinoma epithelium may be more localized and
 morphologically specific.
 \input{figures/baseline224_cancer_gradcam_figure}
 
-\subsection{Later}
-Then I will try to find a way to improve the model on those
-classes with techniques that I have learned in the course and techniques that I
-have found in the literature. Especially going to try to improve on f2 on the
-cancer class itself but also try to look for some correlation between the
-classes themselves. Furthermore, if the model is not sure about a class, e.g.
-having a confidence < 0.9 then a second model will be used which is an expert on
-distinguishing between those two classes. This model will use the intermediate
-layers of the baseline model.
+\subsection{Baseline Improvement}
+As can be seen in the confusion matrix in 
+Figure~\ref{fig:baseline224-confusion-matrix}, a substantial number of true
+stroma samples are classified as debris, smooth muscle, or colorectal
+adenocarcinoma epithelium which is the reason for the weak $F_2$ score. Together
+with the fact that the model's Grad-CAM activations for stroma are relatively
+diffuse, we can hypothesize that the baseline CNN is too conservative when
+predicting stroma.
+
+This observation is further supported by the confidence distribution of true
+stroma samples within their predicted classes. As shown in
+Figure~\ref{fig:baseline224-stroma-confidence}, true stroma samples that are incorrectly assigned to
+debris, smooth muscle, or colorectal adenocarcinoma epithelium often receive
+only moderate prediction confidence. This indicates that at least part of the
+stroma false negatives occur in uncertain decision regions rather than in cases
+where the baseline model is highly confident. Therefore, we can use the
+confidence distribution for triggering a second-stage correction step.
+\input{figures/baseline224_stroma_confidence_distributions_figure}
+
+The overall confidence distributions for the competing non-stroma classes
+provide an additional motivation for this strategy. As shown in
+Figure~\ref{fig:baseline224-nonstroma-confidence}, many correctly predicted non-stroma samples,
+especially for debris and colorectal adenocarcinoma epithelium, are assigned
+with very high confidence. In contrast, the true stroma samples hidden inside
+these predicted classes are more frequent in lower-confidence ranges. This
+separation suggests that confidence can serve as a useful filtering criterion:
+high-confidence predictions can be kept unchanged, while lower-confidence
+predictions can be passed to a specialized binary classifier. The separation is
+less clear for smooth muscle, where true stroma and non-stroma samples overlap
+more strongly in confidence space. Therefore, the smooth-muscle expert may be
+more difficult to apply without increasing the number of false-positive stroma
+predictions.
+\input{figures/baseline224_stroma_nonstroma_confidence_comparison_figure}
+
+%Based on these observations, a second-stage correction strategy can be
+%introduced. For the main confusion pairs, binary expert classifiers are trained
+%to distinguish cancer-associated stroma from the respective competing class:
+%debris versus stroma, smooth muscle versus stroma, and adenocarcinoma epithelium
+%versus stroma. These experts are only consulted when the baseline model predicts
+%one of the competing classes with insufficient confidence. Instead of using a
+%single global threshold, the confidence threshold should be selected separately
+%for each competing class on the validation set. This allows the correction
+%strategy to account for the different confidence patterns observed for debris,
+%smooth muscle, and adenocarcinoma epithelium.
