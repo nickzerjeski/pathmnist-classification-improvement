@@ -83,38 +83,36 @@ histologically closer to the cancer-related categories.
 \subsection{Feature Visualization and Interpretability}
 To inspect what the standalone baseline has learned internally, activation maps
 from intermediate convolutional layers are visualized for both cancer-related
-classes. These visualizations are used as a qualitative complement to the
-confusion matrix. Early layers are expected to respond to local color and texture
-patterns, while deeper layers should represent more class-specific tissue
-structures. The purpose of this analysis is therefore to compare whether the
-model develops clearer internal evidence for colorectal adenocarcinoma
-epithelium than for cancer-associated stroma.
-
+classes which can be seen in Figure~\ref{fig:baseline224-feature-maps}.
+The feature maps indicate that early layers capture local texture and edge-like
+structures, while deeper layers produce more spatially selective activations.
+For the adenocarcinoma epithelium example, several deeper feature maps appear to
+emphasize glandular or boundary-like structures, whereas the stroma example
+shows more diffuse textural activations. This suggests that the CNN learns
+morphology-related representations, although feature-map inspection alone is
+insufficient to establish that the learned features are diagnostically reliable.
 \input{figures/baseline224_cancer_feature_maps_figure}
 
-\textbf{Interpretation placeholder:} Describe which low-level textures,
-intermediate patterns, and deeper activation regions appear to support the
-colorectal adenocarcinoma epithelium prediction in
-Figure~\ref{fig:baseline224-cancer-feature-maps}.
-
-\textbf{Interpretation placeholder:} Describe which activation regions in
-Figure~\ref{fig:baseline224-stroma-feature-maps} support or weaken the
-cancer-associated stroma prediction. Pay particular attention to whether the
-convolutional layers emphasize regions that could explain the confusion with
-smooth muscle, adenocarcinoma epithelium, or debris.
-
+% Grad-CAM highlights the image regions that contribute most strongly to the
+% final class prediction.
+To further assess whether the CNN bases its predictions on meaningful tissue
+regions, Grad-CAM visualizations were generated for representative samples of
+the two cancer-related classes, which can be seen in
+Figure~\ref{fig:baseline224-gradcam}.
+For the cancer-associated stroma sample, the model activates several distributed
+regions across the fibrous tissue structure. The highlighted areas roughly
+correspond to regions containing elongated stromal texture and scattered nuclei.
+However, the activation is relatively diffuse, which indicates that the decision
+may be based more on general texture patterns than on sharply localized
+morphological structures which may be one possible explanation for the weak
+$F_2$ score of this class. For the colorectal adenocarcinoma epithelium sample,
+the Grad-CAM heatmap shows stronger and more localized activations. Several
+high-activation regions are located close to dense epithelial structures and
+tissue boundaries. Compared to the stroma sample, the model appears to focus
+more clearly on spatially constrained tissue regions, suggesting that the
+learned representation for adenocarcinoma epithelium may be more localized and
+morphologically specific.
 \input{figures/baseline224_cancer_gradcam_figure}
-
-\textbf{Interpretation placeholder:} Describe whether the Grad-CAM heatmap in
-Figure~\ref{fig:baseline224-cancer-gradcam} highlights the tissue regions that
-visually support the colorectal adenocarcinoma epithelium prediction, and note
-whether the overlay is consistent with the regions that should drive the
-classification.
-
-\textbf{Interpretation placeholder:} Describe whether the Grad-CAM heatmap in
-Figure~\ref{fig:baseline224-stroma-gradcam} highlights tissue regions that
-support the cancer-associated stroma prediction. Compare the highlighted regions
-with the stroma activation maps in Figure~\ref{fig:baseline224-stroma-feature-maps}.
 
 \subsection{Later}
 Then I will try to find a way to improve the model on those
