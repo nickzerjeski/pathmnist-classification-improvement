@@ -148,3 +148,92 @@ The separate true-224 transfer-learning result in
 `results/bounded_224_resnet18_unweighted_threshold/metrics.json` reached
 test cancer F2 `0.9831053901850362`, but it is a single classifier plus
 thresholding, not the selected multi-classifier approach.
+
+## Approach C/D/E/F/G: Epithelium-safe feature-based stroma expert correction
+
+This pipeline targets the cancer-associated stroma failure mode in the
+`baseline_224` model. Instead of training full CNN specialists, it freezes the
+trained 9-class baseline CNN and uses the penultimate feature vector, baseline
+probabilities, confidence, stroma-vs-competitor margins, and entropy as input to
+three lightweight binary experts:
+
+* debris (`2`) vs stroma (`7`)
+* smooth muscle (`5`) vs stroma (`7`)
+* colorectal adenocarcinoma epithelium (`8`) vs stroma (`7`)
+
+Extract frozen baseline features:
+
+```bash
+PYTHONPATH=src python scripts/feature_stroma_experts.py extract-features \
+  --checkpoint models/baseline_224/best.pt \
+  --batch-size 512 \
+  --workers 0 \
+  --device auto
+```
+
+This writes `features_train.npz`, `features_val.npz`, and `features_test.npz`
+under `results/stroma_feature_experts/`. Each file contains the sample index,
+true label, baseline prediction, baseline probability vector, baseline
+confidence, and frozen feature vector.
+
+Train and compare the expert families:
+
+```bash
+PYTHONPATH=src python scripts/feature_stroma_experts.py train-sklearn
+PYTHONPATH=src python scripts/feature_stroma_experts.py train-mlp \
+  --epochs 50 \
+  --patience 8 \
+  --mlp-variant small
+PYTHONPATH=src python scripts/feature_stroma_experts.py evaluate
+```
+
+The script trains class-balanced logistic regression, calibrated linear SVM,
+calibrated RBF SVM, linear discriminant, and small weighted-cross-entropy MLP
+experts on the same filtered feature arrays. At inference time the baseline
+confidence gate is fixed at `0.90`: if the baseline predicts debris, smooth
+muscle, or epithelium below that confidence, the matching expert is consulted.
+The expert has its own validation-tuned stroma score threshold before a label is
+changed to stroma.
+
+Selection is epithelium-safe. Validation chooses thresholds and systems only if
+colorectal adenocarcinoma epithelium recall and F2 remain at least the
+`baseline_224` validation values. Among safe systems, the selected model
+maximizes validation stroma F2. If the full three-expert system is unsafe, the
+pipeline automatically tries debris plus smooth-muscle experts, then single
+experts, then baseline-only.
+
+Run the full pipeline end to end:
+
+```bash
+PYTHONPATH=src python scripts/feature_stroma_experts.py run \
+  --checkpoint models/baseline_224/best.pt \
+  --batch-size 512 \
+  --mlp-batch-size 1024 \
+  --epochs 50 \
+  --patience 8 \
+  --workers 0 \
+  --device auto
+```
+
+Final artifacts are written to `results/stroma_feature_experts/` and
+`models/stroma_feature_experts/`, including trained sklearn and MLP experts,
+validation threshold search results, selected approach, final thresholds,
+baseline vs corrected metrics, threshold-only ablation, per-approach validation
+and test rows, correction accounting, confusion matrices, and a Markdown report.
+
+Leakage controls:
+
+* experts are trained only on filtered training split samples
+* validation selects MLP checkpoints, expert thresholds, fallback set, and the
+  better approach
+* validation selection enforces non-decreasing epithelium recall and F2
+* test data is not used for training, threshold selection, hyperparameter tuning,
+  or approach selection
+* final test evaluation uses only the validation-selected approach and frozen
+  thresholds
+
+Smoke-test the epithelium guardrail and fallback logic:
+
+```bash
+PYTHONPATH=src python scripts/feature_stroma_experts.py smoke-test
+```
