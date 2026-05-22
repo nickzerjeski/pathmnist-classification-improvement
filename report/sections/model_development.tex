@@ -1,117 +1,83 @@
 \section{Model Development}
 
-\subsection{Standalone Baseline Model}
 After establishing the official MedMNIST ResNet-50 benchmark as an external
-reference point, the first model trained in this work is a standalone
-$224 \times 224$ baseline CNN. This model is not intended to reproduce the
-official benchmark architecture. Instead, it provides a lightweight and fully
-controlled starting point for experiments on the higher-resolution PathMNIST
-images.
-
-The model is a custom small CNN trained from scratch. Its architecture is shown
+reference point, the first model trained in this work is a custom small CNN
+trained from scratch which is used as a base model. Its architecture is shown
 in Figure~\ref{fig:baseline224-smallcnn-architecture}. It consists of five
 $3 \times 3$ convolutional layers. The first two layers map the RGB input from
 three channels to 64 feature channels, followed by max pooling. The next two
 convolutions increase the representation to 128 channels, again followed by max
 pooling. A final convolution maps the representation to 256 channels. Every
-convolution is followed by batch normalization and a SiLU activation. The spatial
-feature map is then reduced by adaptive average pooling, followed by dropout with
-probability $0.2$ and a linear classifier for the nine PathMNIST classes. In
-total, the model has 558,921 trainable parameters.
-
+convolution is followed by batch normalization and a SiLU activation. The
+spatial feature map is then reduced by adaptive average pooling, followed by
+dropout with probability $0.2$ and a linear classifier for the nine PathMNIST
+classes. In total, the model has 558,921 trainable parameters.
 \input{figures/baseline224_smallcnn_architecture}
 
-This smaller architecture is used instead of a ResNet model for pragmatic and
-methodological reasons. A ResNet-50 contains far more parameters and is more
-expensive to train on $224 \times 224$ inputs, while the small CNN can be trained
-and inspected more quickly. It is also easier to analyze layer by layer, which is
-important because this work is not only interested in aggregate accuracy, but
-also in understanding which visual structures are used for the cancer-related
-classes. The model therefore serves as a transparent baseline before adding more
+We choose this smaller architecture instead of a ResNet because a ResNet
+contains far more parameters and is more expensive to train on $224 \times 224$
+inputs, while the small CNN can be trained and inspected more quickly. It is
+also easier to analyze layer by layer, which is important because this work aims
+to understand which visual structures are used for the cancer-related classes.
+The model therefore serves as a transparent base model before adding more
 specialized improvement strategies.
 
-\subsection{Training Setup}
-The baseline CNN is trained on the $224 \times 224$ PathMNIST dataset for 10
+\subsection{Base Model Performance}%TODO: Why these hyperparameters?
+Our base model is trained on the $224 \times 224$ PathMNIST dataset for 10
 epochs with a batch size of 32. Optimization is performed with AdamW using a
 learning rate of $0.001$ and weight decay of $0.0001$. A cosine learning-rate
 schedule is used over the training run. To improve robustness, the training
 configuration applies histology-specific data augmentation, PathMNIST
-normalization, label smoothing of $0.03$, and mixup with $\alpha = 0.05$. The
-model is trained with seed 42, and the training run resolves to the Apple
-Metal backend.
+normalization, label smoothing of $0.03$, and mixup with $\alpha = 0.05$.
 
-The validation split is used to select the standalone baseline checkpoint. On
-the validation set, the selected model reaches an AUC of $0.9996$, an accuracy of
-$0.9873$, and a macro $F_2$ score of $0.9874$. These validation values indicate
-that the model can fit the task well, but the final assessment is made on the
-held-out test set.
-
-\subsection{Standalone Baseline Results}
-On the test set, the standalone $224 \times 224$ CNN reaches an AUC of $0.9935$,
-an accuracy of $0.9057$, and a macro $F_2$ score of $0.8850$. The difference
-between validation and test performance shows that the model is substantially
-less reliable on unseen test examples than the validation metrics alone suggest.
-This is particularly important because the target of this work is not only high
-global performance, but reliable detection of the cancer-related classes.
-
-For colorectal adenocarcinoma epithelium, the model performs strongly. It
-achieves a recall of $0.9886$ and an $F_2$ score of $0.9623$, correctly
-classifying 1,219 of 1,233 test samples from this class. In contrast,
-cancer-associated stroma remains a major weakness. Its recall is only $0.5202$
+On the test set, the base model reaches an overall accuracy of $0.9057$, and an
+overall $F_2$ score of $0.8850$. For the epithelium class, the model performs
+strongly. It achieves a recall of $0.9886$ and an $F_2$ score of $0.9623$,
+correctly classifying 1,219 of 1,233 test samples from this class. In contrast,
+stroma also is a major weakness on our base model. Its recall is only $0.5202$
 and its $F_2$ score is $0.5688$, with only 219 of 421 test samples classified
 correctly.
 
+From the confusion matrix shown in Figure~\ref{fig:baseline224-confusion-matrix}
+we can infer the weak performance on stroma is not due to a uniform failure
+across all classes. Instead, the base model classifies many true stroma samples
+to certain classes, especially debris with 36 samples, smooth muscle with 78
+samples, and epithelium with 77 samples.
 \input{figures/baseline224_confusion_matrix_figure}
 
-\subsection{Error Analysis}
-The confusion matrix in Figure~\ref{fig:baseline224-confusion-matrix} shows that
-the standalone CNN does not fail uniformly across all classes. The most important
-failure mode is the low recall for cancer-associated stroma. Many true stroma
-samples are assigned to visually related or neighboring tissue categories:
-78 samples are predicted as smooth muscle, 77 as colorectal adenocarcinoma
-epithelium, and 36 as debris. This explains why the overall accuracy can remain
-above $0.90$ while the stroma-specific $F_2$ score is still weak.
-
-For colorectal adenocarcinoma epithelium, the model is much more sensitive.
-However, some non-adenocarcinoma samples are still predicted as adenocarcinoma,
-especially normal colon mucosa and cancer-associated stroma. These errors are
-relevant for later model development because they suggest that the model's main
-difficulty is not simply distinguishing cancer from all non-cancer tissue.
-Instead, the confusion is concentrated around specific tissue types that are
-histologically closer to the cancer-related categories.
 
 \subsection{Feature Visualization and Interpretability}
-To inspect what the standalone baseline has learned internally, activation maps
-from intermediate convolutional layers are visualized for both cancer-related
+To inspect why the base model performs well on epithelium but poorly on stroma,
+we analyze what it has learned internally. For that, activation maps from
+intermediate convolutional layers are visualized for both cancer-related
 classes which can be seen in Figure~\ref{fig:baseline224-feature-maps}.
 The feature maps indicate that early layers capture local texture and edge-like
 structures, while deeper layers produce more spatially selective activations.
-For the adenocarcinoma epithelium example, several deeper feature maps appear to
-emphasize glandular or boundary-like structures, whereas the stroma example
-shows more diffuse textural activations. This suggests that the CNN learns
+For the epithelium sample, several deeper feature maps appear to emphasize
+glandular or boundary-like structures, whereas the stroma example shows more
+diffuse textural activations. This suggests that the CNN learns
 morphology-related representations, although feature-map inspection alone is
-insufficient to establish that the learned features are diagnostically reliable.
+insufficient to establish that the learned features are reliable.
 \input{figures/baseline224_cancer_feature_maps_figure}
 
 % Grad-CAM highlights the image regions that contribute most strongly to the
 % final class prediction.
-To further assess whether the CNN bases its predictions on meaningful tissue
-regions, Grad-CAM visualizations were generated for representative samples of
-the two cancer-related classes, which can be seen in
+To further assess whether the base model bases its predictions on meaningful
+tissue regions, Grad-CAM visualizations were generated for representative
+samples of the two cancer-related classes, which can be seen in
 Figure~\ref{fig:baseline224-gradcam}.
-For the cancer-associated stroma sample, the model activates several distributed
-regions across the fibrous tissue structure. The highlighted areas roughly
-correspond to regions containing elongated stromal texture and scattered nuclei.
-However, the activation is relatively diffuse, which indicates that the decision
-may be based more on general texture patterns than on sharply localized
-morphological structures which may be one possible explanation for the weak
-$F_2$ score of this class. For the colorectal adenocarcinoma epithelium sample,
-the Grad-CAM heatmap shows stronger and more localized activations. Several
-high-activation regions are located close to dense epithelial structures and
-tissue boundaries. Compared to the stroma sample, the model appears to focus
-more clearly on spatially constrained tissue regions, suggesting that the
-learned representation for adenocarcinoma epithelium may be more localized and
-morphologically specific.
+For the stroma sample, the model activates several distributed regions across
+the fibrous tissue structure. The highlighted areas roughly correspond to
+regions containing elongated stromal texture and scattered nuclei. However, the
+activation is relatively diffuse, which indicates that the decision may be based
+more on general texture patterns than on sharply localized morphological
+structures, therefore inducing a potential explanation for the weak $F_2$ score
+of this class. For the epithelium sample, the Grad-CAM heatmap shows stronger
+and more localized activations. Several high-activation regions are located
+close to dense epithelial structures and tissue boundaries. Compared to the
+stroma sample, the model appears to focus more clearly on spatially constrained
+tissue regions, suggesting that the learned representation for epithelium may be
+more meaningful.
 \input{figures/baseline224_cancer_gradcam_figure}
 
 \subsection{Baseline Improvement}
