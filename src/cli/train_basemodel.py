@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import sys
+from pathlib import Path
 
-from pathmnist.train import main
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from train import main
 
 
 DEFAULT_ARGS = [
@@ -38,6 +41,8 @@ DEFAULT_ARGS = [
     "0",
     "--norm",
     "pathmnist",
+    "--data-root",
+    "src/dataset",
     "--run-name",
     "basemodel",
     "--target-cancer-f2",

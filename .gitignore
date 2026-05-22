@@ -4,5 +4,4 @@
 __pycache__/
 output/
 svg-inkscape/
-data/*.npz
-*.zip
+*.npz

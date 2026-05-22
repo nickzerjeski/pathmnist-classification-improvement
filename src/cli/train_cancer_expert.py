@@ -6,6 +6,9 @@ import json
 import time
 from dataclasses import dataclass
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import numpy as np
 import torch
@@ -14,9 +17,9 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 from tqdm import tqdm
 
-from pathmnist.data import build_dataset
-from pathmnist.models import SmallCNN
-from pathmnist.train import pick_device, set_seed
+from data import build_dataset
+from models import SmallCNN
+from train import pick_device, set_seed
 
 
 STROMA_LABEL = 7
@@ -366,7 +369,7 @@ def main() -> None:
     parser.add_argument("--workers", type=int, default=0)
     parser.add_argument("--device", default="auto")
     parser.add_argument("--seed", type=int, default=2042)
-    parser.add_argument("--data-root", default="data")
+    parser.add_argument("--data-root", default="src/dataset")
     parser.add_argument("--baseline-predictions-dir", type=Path, default=Path("results/basemodel"))
     parser.add_argument("--results-dir", type=Path, default=Path("results/cancer_expert"))
     parser.add_argument("--models-dir", type=Path, default=Path("models/cancer_expert"))

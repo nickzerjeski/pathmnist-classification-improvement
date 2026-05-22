@@ -23,7 +23,7 @@
         "workers": 0,
         "device": "auto",
         "seed": 2042,
-        "data_root": "data",
+        "data_root": "src/dataset",
         "baseline_predictions_dir": "results/basemodel",
         "results_dir": "results/cancer_expert",
         "models_dir": "models/cancer_expert",

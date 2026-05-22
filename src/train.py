@@ -13,9 +13,9 @@ from torch.optim import Adam, AdamW, SGD
 from torch.optim.lr_scheduler import CosineAnnealingLR, MultiStepLR
 from tqdm import tqdm
 
-from pathmnist.data import build_loader, dataset_meta
-from pathmnist.metrics import compute_metrics, report_dict, softmax_np
-from pathmnist.models import build_model, count_parameters
+from data import build_loader, dataset_meta
+from metrics import compute_metrics, report_dict, softmax_np
+from models import build_model, count_parameters
 
 
 def set_seed(seed: int) -> None:
@@ -159,7 +159,7 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--workers", type=int, default=2)
     parser.add_argument("--device", default="auto")
-    parser.add_argument("--data-root", default="data")
+    parser.add_argument("--data-root", default="src/dataset")
     parser.add_argument("--norm", choices=["pathmnist", "official"], default="official")
     parser.add_argument("--results-dir", default="results")
     parser.add_argument("--models-dir", default="models")

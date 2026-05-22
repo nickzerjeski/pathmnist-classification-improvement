@@ -23,7 +23,7 @@
   "seed": 42,
   "workers": 0,
   "device": "auto",
-  "data_root": "data",
+  "data_root": "src/dataset",
   "norm": "pathmnist",
   "results_dir": "results",
   "models_dir": "models",

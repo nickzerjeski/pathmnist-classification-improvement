@@ -3,14 +3,17 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import numpy as np
 import torch
 
-from pathmnist.data import build_loader, dataset_meta
-from pathmnist.metrics import report_dict, softmax_np
-from pathmnist.models import build_model
-from pathmnist.train import pick_device
+from data import build_loader, dataset_meta
+from metrics import report_dict, softmax_np
+from models import build_model
+from train import pick_device
 
 
 @torch.inference_mode()
@@ -49,7 +52,7 @@ def main() -> None:
         config.get("source_size"),
         "none",
         args.workers,
-        config.get("data_root", "data"),
+        config.get("data_root", "src/dataset"),
         config.get("norm", "pathmnist"),
     )
     y_true, y_prob = predict(model, loader, device)

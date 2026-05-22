@@ -22,5 +22,5 @@ notebook = [
   "nbformat",
 ]
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.setuptools]
+py-modules = ["data", "metrics", "models", "train"]

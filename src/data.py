@@ -59,7 +59,7 @@ def build_dataset(
     image_size: int = 28,
     source_size: int | None = None,
     augment: str = "none",
-    root: str = "data",
+    root: str = "src/dataset",
     norm: str = "pathmnist",
 ):
     dataset_size = source_size if source_size is not None else image_size
@@ -81,7 +81,7 @@ def build_loader(
     source_size: int | None,
     augment: str,
     workers: int,
-    root: str = "data",
+    root: str = "src/dataset",
     norm: str = "pathmnist",
 ) -> DataLoader:
     dataset = build_dataset(split, image_size=image_size, source_size=source_size, augment=augment, root=root, norm=norm)
