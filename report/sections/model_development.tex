@@ -113,12 +113,25 @@ more difficult to apply without increasing the number of false-positive stroma
 predictions.
 \input{figures/baseline224_stroma_nonstroma_confidence_comparison_figure}
 
-%Based on these observations, a second-stage correction strategy can be
-%introduced. For the main confusion pairs, binary expert classifiers are trained
-%to distinguish cancer-associated stroma from the respective competing class:
-%debris versus stroma, smooth muscle versus stroma, and adenocarcinoma epithelium
-%versus stroma. These experts are only consulted when the baseline model predicts
-%one of the competing classes with insufficient confidence (confidence < 0.9).
+Based on these observations, a second-stage correction strategy is introduced.
+For the main confusion pairs, binary expert classifiers are trained to
+distinguish cancer-associated stroma from the respective competing class:
+debris versus stroma, smooth muscle versus stroma, and adenocarcinoma epithelium
+versus stroma. These experts are only consulted when the base model predicts
+one of the competing classes with insufficient confidence (confidence $< 0.9$).
 
-- For that we trained three experts (which models) on distinguishing stroma from
-debris, smooth muscle, and epithelium, respectively.
+\begin{itemize}
+    \item Each expert uses the same small CNN architecture as the base model,
+    but with a binary output layer. The convolutional feature extractor is
+    initialized from the trained base model, while the final classifier is
+    adapted to the two-class expert task.
+    \item Each expert is trained only on training samples from its own two
+    ground-truth classes. For example, the debris-stroma expert is trained only
+    with debris and stroma samples, the smooth-muscle-stroma expert only with
+    smooth muscle and stroma samples, and the epithelium-stroma expert only with
+    epithelium and stroma samples.
+    \item The expert targets are binary: stroma is the positive class and the
+    corresponding competing tissue type is the negative class. Class-balanced
+    sampling is used during training, and the validation split is used to select
+    the expert checkpoints and decision thresholds.
+\end{itemize}
