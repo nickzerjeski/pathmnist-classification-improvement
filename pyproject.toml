@@ -1,6 +1,6 @@
 [project]
 name = "pathmnist-classification-improvement"
-version = "0.1.0"
+version = "1.0.0"
 description = "Reproducible PathMNIST training, evaluation, ensembling, and recall-oriented experiments."
 requires-python = ">=3.11"
 dependencies = [
