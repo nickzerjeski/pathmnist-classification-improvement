@@ -33,12 +33,16 @@ def load_probability_npz(path: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray
     return y_true, y_prob.argmax(axis=1), y_prob
 
 
-def load_official_resnet50(path: Path, y_true: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    raw = pd.read_csv(path, header=None).to_numpy(dtype=float)
-    y_prob = raw[:, 1:]
-    if len(y_prob) != len(y_true):
-        raise ValueError(f"{path} has {len(y_prob)} rows, expected {len(y_true)}")
-    return y_prob.argmax(axis=1), y_prob
+def load_probability_csv(path: Path, expected_y_true: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    frame = pd.read_csv(path)
+    prob_columns = [column for column in frame.columns if column.startswith("prob_")]
+    if not prob_columns:
+        raise ValueError(f"{path} does not contain probability columns")
+    y_true = frame["y_true"].to_numpy(dtype=int)
+    if not np.array_equal(y_true, expected_y_true):
+        raise ValueError(f"{path} labels do not align with Basemodel test labels")
+    y_prob = frame[prob_columns].to_numpy(dtype=float)
+    return frame["y_pred"].to_numpy(dtype=int), y_prob
 
 
 def load_hard_npz(path: Path) -> tuple[np.ndarray, np.ndarray]:
@@ -99,11 +103,6 @@ def write_confusion_matrix(path: Path, y_true: np.ndarray, y_pred: np.ndarray) -
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--results-dir", type=Path, default=Path("results"))
-    parser.add_argument(
-        "--official-resnet50-csv",
-        type=Path,
-        default=Path("artifacts/medmnist_predictions/predictions/pathmnist_test_[AUC]0.989_[ACC]0.924@resnet50_28_3.csv"),
-    )
     args = parser.parse_args()
 
     basemodel_dir = args.results_dir / "basemodel"
@@ -111,7 +110,7 @@ def main() -> None:
     resnet50_dir = args.results_dir / "baseline_resnet50"
 
     y_true, basemodel_pred, basemodel_prob = load_probability_npz(basemodel_dir / "test_predictions.npz")
-    resnet50_pred, resnet50_prob = load_official_resnet50(args.official_resnet50_csv, y_true)
+    resnet50_pred, resnet50_prob = load_probability_csv(resnet50_dir / "test_predictions.csv", y_true)
     expert_true, cancer_expert_pred = load_hard_npz(cancer_expert_dir / "pair_test_targeted_predictions.npz")
     if not np.array_equal(y_true, expert_true):
         raise ValueError("Cancer-Expert predictions do not align with Basemodel test labels")
