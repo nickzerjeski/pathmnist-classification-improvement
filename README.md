@@ -12,21 +12,38 @@ The main question is:
 
 > How can we predict cancer tissue more reliably?
 
-We try to maximize the F2-score because it has more emphasis on the recall.
-Simply maximizing the recall would lead to classifiying every image as
-cancer. We have an emphasis on the recall simply because it is more
-important to try and catch as many cancer images as possible. You'd
-rather want more false positives when it comes to cancer than false
-negatives.
+To answer this question, we compare the baseline ResNet50 with our developed
+model. Since it is more important to correctly classify all cancer tissues than
+preventing the misclassification of healthy tissue as cancer, we focus on the
+following metrics:
 
-For final results the following metrics should always be available:
-* accuracy
-* precision
-* recall
-* specificity
-* ROC-AUC
-* F1
+* Accuracy
+* Recall
 * F2
+* Cancer vs. Rest Recall
+* Cancer vs. Rest F2
+* Stroma Recall
+* Stroma Rest F2
+* Epithelium Recall
+* Epithelium F2
+
+where the Cancer vs. Rest measurement is merging Stroma and Epithelium in one
+class and the other classes in another class. Stroma and Epithelium are the two
+cancer related classes.
+
+## Models
+We have the following models:
+* Baseline ResNet50
+* Cancer-Expert
+* Basemodel
+* Debris-Stroma-Expert
+* Smooth-Muscle-Stroma-Expert
+* Epithelium-Stroma-Expert
+
+Baseline ResNet50 is the baseline model from the MedMNIST study which we use to
+see if we improved. The Basemodel does the main decisions. However, if it is not
+sure when classifying the Debris, Smooth Muscle or Epithelium class (confidence
+< 90%), then it consolidates the respective expert model.
 
 ## Dataset
 
