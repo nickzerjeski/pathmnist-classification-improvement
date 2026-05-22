@@ -1,0 +1,13 @@
+{
+  "system": "Baseline ResNet50",
+  "acc": 0.9238161559888579,
+  "recall_macro": 0.8981196926576095,
+  "precision_stroma": 0.9123505976095617,
+  "recall_stroma": 0.5439429928741093,
+  "f2_stroma": 0.5917312661498708,
+  "precision_epithelium": 0.9363707776904949,
+  "recall_epithelium": 0.9667477696674777,
+  "f2_epithelium": 0.9605157131345688,
+  "recall_stroma_epithelium_vs_rest": 0.8887545344619106,
+  "f2_stroma_epithelium_vs_rest": 0.902948402948403
+}

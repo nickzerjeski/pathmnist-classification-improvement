@@ -1,0 +1,13 @@
+{
+  "system": "Cancer-Expert",
+  "acc": 0.9259052924791087,
+  "recall_macro": 0.929532854255824,
+  "precision_stroma": 0.828752642706131,
+  "recall_stroma": 0.9311163895486936,
+  "f2_stroma": 0.9086694483078349,
+  "precision_epithelium": 0.926605504587156,
+  "recall_epithelium": 0.9829683698296837,
+  "f2_epithelium": 0.9711538461538461,
+  "recall_stroma_epithelium_vs_rest": 0.9800483675937122,
+  "f2_stroma_epithelium_vs_rest": 0.9652256758366083
+}

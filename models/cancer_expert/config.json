@@ -1,0 +1,38 @@
+{
+  "modes": [
+    "pair"
+  ],
+  "image_size": 112,
+  "source_size": 224,
+  "augment": "histology",
+  "norm": "pathmnist",
+  "epochs": 6,
+  "patience": 2,
+  "batch_size": 64,
+  "width": 24,
+  "arch": "small_cnn",
+  "baseline_checkpoint": "models/basemodel/best.pt",
+  "dropout": 0.25,
+  "lr": 0.001,
+  "weight_decay": 0.0001,
+  "workers": 0,
+  "device": "auto",
+  "seed": 2042,
+  "data_root": "data",
+  "baseline_predictions_dir": "results/basemodel",
+  "results_dir": "results/cancer_expert",
+  "models_dir": "models/cancer_expert",
+  "target_stroma_f2": 0.9,
+  "threshold_steps": 21,
+  "force": false,
+  "no_progress": true,
+  "device_resolved": "mps",
+  "model_name": "Cancer-Expert",
+  "base_model": "Basemodel",
+  "experts": [
+    "debris_stroma",
+    "smooth_muscle_stroma",
+    "epithelium_stroma"
+  ],
+  "baseline_gate": 0.9
+}

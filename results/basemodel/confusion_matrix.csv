@@ -1,0 +1,10 @@
+,adipose,background,debris,lymphocytes,mucus,smooth_muscle,normal_colon_mucosa,cancer_associated_stroma,colorectal_adenocarcinoma_epithelium
+adipose,1154,1,0,7,7,162,1,6,0
+background,0,847,0,0,0,0,0,0,0
+debris,0,0,339,0,0,0,0,0,0
+lymphocytes,0,0,0,634,0,0,0,0,0
+mucus,11,0,0,0,970,22,17,14,1
+smooth_muscle,0,9,19,0,29,518,0,1,16
+normal_colon_mucosa,0,0,1,47,0,0,603,1,89
+cancer_associated_stroma,0,0,36,7,2,78,2,219,77
+colorectal_adenocarcinoma_epithelium,0,0,0,0,0,6,8,0,1219

@@ -279,8 +279,8 @@ def run_config(args: argparse.Namespace, mode: str, run_dir: Path, model_dir: Pa
     train_labels = train_ds.labels.reshape(-1).astype(int)
     val_labels = val_ds.labels.reshape(-1).astype(int)
     test_labels = test_ds.labels.reshape(-1).astype(int)
-    val_base = load_baseline_npz(args.baseline_features_dir / "features_val.npz")
-    test_base = load_baseline_npz(args.baseline_features_dir / "features_test.npz")
+    val_base = load_baseline_npz(args.baseline_predictions_dir / "val_predictions.npz")
+    test_base = load_baseline_npz(args.baseline_predictions_dir / "test_predictions.npz")
     score_val = {}
     score_test = {}
     histories = {}
@@ -367,9 +367,9 @@ def main() -> None:
     parser.add_argument("--device", default="auto")
     parser.add_argument("--seed", type=int, default=2042)
     parser.add_argument("--data-root", default="data")
-    parser.add_argument("--baseline-features-dir", type=Path, default=Path("results/stroma_feature_experts"))
-    parser.add_argument("--results-dir", type=Path, default=Path("results/image_stroma_experts"))
-    parser.add_argument("--models-dir", type=Path, default=Path("models/image_stroma_experts"))
+    parser.add_argument("--baseline-predictions-dir", type=Path, default=Path("results/basemodel"))
+    parser.add_argument("--results-dir", type=Path, default=Path("results/cancer_expert"))
+    parser.add_argument("--models-dir", type=Path, default=Path("models/cancer_expert"))
     parser.add_argument("--target-stroma-f2", type=float, default=0.90)
     parser.add_argument("--threshold-steps", type=int, default=21)
     parser.add_argument("--force", action="store_true")

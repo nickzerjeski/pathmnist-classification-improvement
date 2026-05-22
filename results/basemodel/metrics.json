@@ -1,0 +1,13 @@
+{
+  "system": "Basemodel",
+  "acc": 0.9057103064066853,
+  "recall_macro": 0.8885866854282916,
+  "precision_stroma": 0.9087136929460581,
+  "recall_stroma": 0.5201900237529691,
+  "f2_stroma": 0.5688311688311688,
+  "precision_epithelium": 0.869472182596291,
+  "recall_epithelium": 0.9886455798864558,
+  "f2_epithelium": 0.9622671297758131,
+  "recall_stroma_epithelium_vs_rest": 0.9159613059250302,
+  "f2_stroma_epithelium_vs_rest": 0.9171812568107519
+}

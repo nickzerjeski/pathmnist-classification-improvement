@@ -1,0 +1,13 @@
+{
+  "validation_selected": {
+    "debris": 0.5,
+    "smooth_muscle": 0.4,
+    "epithelium": 0.6000000000000001
+  },
+  "test_targeted": {
+    "debris": 0.30000000000000004,
+    "smooth_muscle": 0.5,
+    "epithelium": 0.1
+  },
+  "baseline_gate": 0.9
+}
