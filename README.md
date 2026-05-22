@@ -23,7 +23,7 @@ following metrics:
 * Cancer vs. Rest Recall
 * Cancer vs. Rest F2
 * Stroma Recall
-* Stroma Rest F2
+* Stroma F2
 * Epithelium Recall
 * Epithelium F2
 
