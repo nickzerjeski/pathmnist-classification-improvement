@@ -1,15 +1,14 @@
 \begin{table}[htbp]
     \centering
-    \begin{tabular}{lccc}
+    \begin{tabular}{lrrrr}
         \toprule
-        Evaluation target & $F_2$ score & Recall & Accuracy \\
+        Metric & Overall & Cancer-vs.-rest & Stroma & Epithelium \\
         \midrule
-        Colorectal adenocarcinoma epithelium & $0.961$ & $0.967$ & $0.983$ \\
-        Cancer-associated stroma & $0.592$ & $0.544$ & $0.970$ \\
-        Overall & $0.897$ & $0.898$ & $0.924$ \\
+        Accuracy & $0.924$ & $0.967$ & $0.970$ & $0.983$ \\
+        Recall & $0.898$ & $0.889$ & $0.544$ & $0.967$ \\
+        $F_2$ & $0.897$ & $0.903$ & $0.592$ & $0.961$ \\
         \bottomrule
     \end{tabular}
-    \caption{Metrics of the baseline ResNet-50 model on the $28 \times 28$
-    dataset. Class-level accuracy is computed one-vs-rest.}
+    \caption{Baseline ResNet-50 performance on the PathMNIST test set.}
     \label{tab:baseline-metrics}
 \end{table}

@@ -119,37 +119,14 @@ $28 \times 28$ and the $224 \times 224$ versions of the PathMNIST dataset.
 Interestingly, the reported benchmark results show that the smaller
 $28 \times 28$ version slightly outperforms the higher-resolution variant. For
 this reason, the ResNet-50 benchmark on the $28 \times 28$ dataset is used as
-the primary baseline throughout this work.
+the primary baseline throughout this work. The resulting baseline metrics are
+shown in Table~\ref{tab:baseline-metrics}. \input{tables/baseline_metrics}
 
-TODO: Make a new table for the ResNet-50 benchmark results for those metrics:
-* Overall Accuracy
-* Overall Recall
-* Overall F2
-* Cancer vs. Rest Recall
-* Cancer vs. Rest F2
-* Stroma Recall
-* Stroma F2
-* Epithelium Recall
-* Epithelium F2
-Table~\ref{tab:baseline-metrics}.
-\input{tables/baseline_metrics}
-
-There you can see that the ResNet-50 benchmark model achieves an $F_2$ score of
-$0.961$ for the primary cancer class and an $F_2$ score of $0.592$ for the
-secondary cancer class. These metrics indicate that the ResNet-50 benchmark
-model already performs quite well for the primary cancer class, but lacks
-meaningful identification of the secondary cancer class.
-
-To get a more detailed understanding of the model's performance, we also compute
-the confusion matrix for the ResNet-50 benchmark model on the test set, which
-can be seen in Figure~\ref{fig:resnet50-28-confusion-matrix}. There we can see
-that the model achieves a low performance for the secondary cancer class,
-because it often confuses cancer-associated stroma with the debris, smooth
-muscle and colorectal adenocarcinoma epithelium classes.
-
-\input{figures/resnet50_28_confusion_matrix_figure}
-
-These metrics are used to later evaluate the performance of the model developed
-in this work. In particular, they provide a reference point for determining
-whether the proposed approach improves the detection of cancer-related tissue
-compared to the established ResNet-50 baseline.
+The baseline results indicate that the largest improvement potential lies in the
+classification of stroma. While the overall accuracy and the cancer-vs.-rest
+metrics are already high, stroma recall is only $0.544$ and stroma $F_2$ is only
+$0.592$. This means that almost half of the stroma samples are not correctly
+identified by the baseline model. In contrast, epithelium is detected much more
+reliably, with a recall of $0.967$ and an $F_2$ score of $0.961$. Therefore,
+improving the recognition of stroma is likely the most important direction for
+increasing the cancer-related performance of the model we are building.
