@@ -1,0 +1,116 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    scale=0.58, transform shape,
+    >=Latex,
+    font=\small,
+    box/.style={
+        draw,
+        rounded corners,
+        thick,
+        align=center,
+        minimum height=1.1cm,
+        minimum width=2.8cm,
+        fill=blue!5
+    },
+    decision/.style={
+        draw,
+        diamond,
+        thick,
+        align=center,
+        aspect=2.2,
+        inner sep=1.2pt,
+        fill=orange!8,
+        text width=4.2cm
+    },
+    output/.style={
+        draw,
+        rounded corners,
+        thick,
+        align=center,
+        minimum height=1.0cm,
+        minimum width=2.1cm,
+        fill=green!5
+    },
+    outer/.style={
+        draw,
+        rounded corners,
+        very thick,
+        inner xsep=10pt,
+        inner ysep=10pt
+    }
+]
+
+% --------------------------------------------------
+% Nodes
+% --------------------------------------------------
+
+% Input centered between upper and lower paths
+\node (input) at (-3.8,0) [box] {Sample $x$};
+
+% Upper path
+\node (base) at (0,1.4) [box] {Base model $\mathcal M_B$};
+\node (baseout) at (3.0,1.4) [output, minimum width=1.3cm] {$\hat y_B$};
+\node (decision) at (7.9,1.4) [decision]
+{$\hat y_B \in \mathrm{Experts},$\\[2pt]
+$p_B(\hat y_B \mid x) < \tau$};
+
+\node (finalbase) at (13.3,1.4) [output, minimum width=2.3cm]
+{$\hat y = \hat y_B$};
+
+% Lower path
+\node (expert) at (7.9,-1.4) [box, minimum width=2.9cm]
+{Expert $\mathcal M_E$};
+
+\node (finalexpert) at (13.3,-1.4) [output, minimum width=2.3cm]
+{$\hat y = \hat y_E$};
+
+% Final output outside the system box
+\node (final) at (16.7,0) [output, minimum width=1.4cm]
+{$\hat y$};
+
+% --------------------------------------------------
+% Helper coordinates
+% --------------------------------------------------
+
+\coordinate (inbranch) at (-1.9,0);
+\coordinate (merge) at (14.8,0);
+
+% --------------------------------------------------
+% Arrows
+% --------------------------------------------------
+
+% Sample branching to both paths
+\draw[-, thick] (input.east) -- (inbranch);
+\draw[->, thick] (inbranch) |- (base.west);
+\draw[->, thick] (inbranch) |- (expert.west);
+
+% Main upper path
+\draw[->, thick] (base) -- (baseout);
+\draw[->, thick] (baseout) -- (decision);
+
+% Decision branches
+\draw[->, thick] (decision) -- node[above] {no} (finalbase);
+\draw[->, thick] (decision) -- node[right] {yes} (expert);
+
+% Expert output
+\draw[->, thick] (expert) -- (finalexpert);
+
+% Merge both internal outputs into final output
+\draw[thick] (finalbase.east) -| (merge);
+\draw[thick] (finalexpert.east) -| (merge);
+\draw[->, thick] (merge) -- (final.west);
+
+% --------------------------------------------------
+% Outer system box
+% --------------------------------------------------
+
+\node[outer, fit=(base)(baseout)(decision)(expert)(finalbase)(finalexpert)] (system) {};
+\node[anchor=south west, font=\bfseries] at (system.north west)
+{Cancer Expert};
+
+\end{tikzpicture}
+
+\caption{Architecture of the final cancer expert model.}
+\label{fig:cancer-expert}
+\end{figure}

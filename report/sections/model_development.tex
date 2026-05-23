@@ -115,23 +115,13 @@ predictions.
 
 Based on these observations, a second-stage correction strategy is introduced.
 For the main confusion pairs, binary expert classifiers are trained to
-distinguish cancer-associated stroma from the respective competing class:
-debris versus stroma, smooth muscle versus stroma, and adenocarcinoma epithelium
-versus stroma. These experts are only consulted when the base model predicts
-one of the competing classes with insufficient confidence (confidence $< 0.9$).
-
-\begin{itemize}
-    \item Each expert uses the same small CNN architecture as the base model,
-    but with a binary output layer. The convolutional feature extractor is
-    initialized from the trained base model, while the final classifier is
-    adapted to the two-class expert task.
-    \item Each expert is trained only on training samples from its own two
-    ground-truth classes. For example, the debris-stroma expert is trained only
-    with debris and stroma samples, the smooth-muscle-stroma expert only with
-    smooth muscle and stroma samples, and the epithelium-stroma expert only with
-    epithelium and stroma samples.
-    \item The expert targets are binary: stroma is the positive class and the
-    corresponding competing tissue type is the negative class. Class-balanced
-    sampling is used during training, and the validation split is used to select
-    the expert checkpoints and decision thresholds.
-\end{itemize}
+distinguish stroma from the respective competing class: debris versus stroma,
+smooth muscle versus stroma, and epithelium versus stroma. These experts are
+only consulted when the base model predicts one of the competing classes with
+insufficient confidence lower than a threshold $\tau=0.9$. The resulting
+architecture is shown in Figure~\ref{fig:cancer-expert}.
+Each expert uses the same small CNN architecture as the base model, but with a
+binary output layer, in essence stroma vs. the competing class. Therefore, the
+expert classifiers are only trained on samples from its own two ground-truth
+classes.
+\input{figures/cancer_expert}
