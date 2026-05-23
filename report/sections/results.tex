@@ -23,12 +23,13 @@ low. This shows that the expert system is effective in correcting the specific
 confusion cases that were most relevant for improving stroma detection, without
 introducing many new errors in the opposite direction.
 
-This claim is further supported by the quantitative metrics, which can be seen 
-in [Figure TODO]. There we can see, that the cancer expert system improves over
-all measured metrics but epithilum recall. However, since we detect cancer by
-detecting both epithelium and stroma and the lower recall for epithelium is due
-to the fact that some epithelium samples are now misclassified as stroma, this
-is an acceptable trade-off.
+This claim is further supported by the quantitative metrics, which can be seen
+in Figure~\ref{fig:results-metric-comparison}. There we can see, that the
+cancer expert system improves over all measured metrics but epithilum recall.
+However, since we detect cancer by detecting both epithelium and stroma and the
+lower recall for epithelium is due to the fact that some epithelium samples are
+now misclassified as stroma, this is an acceptable trade-off.
+\input{figures/results_metric_comparison_figure}
 
 Furthermore, the cancer expert system improves the overall accuracy, reall and
 $F_2$ score in comparison to the baseline. Since the main goal is to reliably
