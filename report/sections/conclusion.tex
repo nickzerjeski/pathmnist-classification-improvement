@@ -1,2 +1,46 @@
 \section{Conclusion}
-...
+In this work, we investigated whether an expert-based correction system can
+improve the cancer-related classification performance of a baseline model on the
+PathMNIST dataset. The results show that this strategy can be effective when the
+baseline model does not fail uniformly, but instead shows specific and repeated
+confusion cases. By introducing specialized binary expert classifiers for these
+confusion pairs, the final cancer expert system was able to correct many of
+these errors and substantially improve the stroma classification performance.
+
+The most important improvement is observed for stroma recall and stroma $F_2$
+score. Since stroma was the weakest cancer-related class in the baseline model,
+improving this class also led to stronger cancer-vs.-rest performance. This
+shows that expert systems can be used to improve a general baseline classifier
+in a targeted way, instead of trying to improve all classes equally. The
+approach is therefore especially useful when the main objective is not only high
+overall accuracy, but better performance on medically relevant classes where
+false negatives are particularly problematic.
+
+However, the presented system should be understood as a toy example rather than
+a complete medical classification system. The baseline model and the expert
+classifiers use relatively small CNN architectures, and only a limited amount of
+hyperparameter optimization was performed. Future work could explore more
+systematic hyperparameter selection for both the baseline model and the binary
+experts. This could include different learning rates, regularization strategies,
+augmentation settings, model sizes, and decision thresholds. A better optimized
+baseline model could reduce the number of initial errors, while better optimized
+experts could improve the correction step without increasing false-positive
+stroma predictions.
+
+Another limitation is the use of a fixed confidence threshold for deciding when
+an expert should be applied. In this work, the threshold is manually selected
+and applied equally across the relevant expert cases. Future work could
+investigate more dynamic decision strategies. For example, the threshold could
+be selected separately for each confusion pair, adapted based on validation-set
+performance, or replaced by a learned gating mechanism that decides whether the
+baseline prediction should be trusted or passed to an expert classifier.
+
+Finally, real-world applications would likely rely on more advanced model
+architectures than the small CNN used in this work. Modern vision models, such
+as Vision Transformers or larger pretrained convolutional networks, could
+provide stronger feature representations and better generalization.
+Nevertheless, the results demonstrate the potential of combining a general
+classifier with specialized expert models. Even in this simplified setting, the
+expert system improved the classification of the most problematic cancer-related
+class and showed that targeted correction of specific confusion cases can be a
+promising strategy for improving recall-oriented medical image classification.

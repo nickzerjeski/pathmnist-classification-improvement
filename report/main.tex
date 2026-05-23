@@ -15,7 +15,7 @@
 
 \usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit}
 
-\title{Title to be done}
+\title{Improving Cancer-Related Tissue Classification with Expert-Based Correction}
 \author{Nick Zerjeski}
 \date{\today}
 
@@ -25,8 +25,25 @@
 \maketitle
 
 \begin{abstract}
-Abstract to be done.
+This work investigates whether an expert-based correction system can improve
+cancer-related tissue classification on the PathMNIST dataset. As a reference
+point, the official ResNet-50 benchmark is used, while a custom small CNN is
+trained as the base model on the $224 \times 224$ image version. The base model
+achieves strong performance for colorectal adenocarcinoma epithelium, but shows
+weak performance for cancer-associated stroma. Analysis of the confusion matrix
+and confidence distributions shows that many stroma samples are repeatedly
+misclassified as debris, smooth muscle, or epithelium. To address this issue,
+specialized binary expert classifiers are introduced for these confusion pairs
+and applied only when the base model prediction has insufficient confidence. The
+resulting cancer expert system substantially improves stroma recall and stroma
+$F_2$ score, while also improving the overall cancer-vs.-rest performance. These
+results show that targeted expert classifiers can correct specific weaknesses of
+a base model and improve recall-oriented cancer detection metrics. Although the
+system is only a simplified example, it demonstrates the potential of
+expert-based correction strategies for medical image classification.
 \end{abstract}
+\newpage
+\tableofcontents
 \newpage
 
 \pagenumbering{arabic}
@@ -38,5 +55,13 @@ Abstract to be done.
 \input{sections/results}
 
 \input{sections/conclusion}
+
+\appendix
+\section*{Acknowledgement of AI Assistance}
+This report was written in VS Code with the assistance of Copilot\footnote{https://docs.github.com/en/copilot/how-tos/get-code-suggestions/get-ide-code-suggestions},
+which is an AI-powered code completion tool developed by GitHub. It provides
+suggestions for code and text as you write. Besides Copilot, ChatGPT was used to
+generate first drafts of TikZ figures and in combination with Codex it was used
+for model training and evaluation code.
 
 \end{document}
