@@ -1,2 +1,52 @@
 \section{Results}
-...
+After developing the cancer expert model and applying it to the test set, the
+next step is to evaluate the results. For that, we first look at the confusion
+matrices for the baseline and the cancer expert model. These can be seen in
+Figure~\ref{fig:resnet50-cancer-expert-confusion-comparison}. The confusion
+matrices show that the cancer expert model substantially improves the main
+weakness of the baseline.
+\input{figures/resnet50_cancer_expert_confusion_matrix_comparison_figure}
+
+In the baseline, only 229 of the 421 stroma samples are classified correctly
+whereas the cancer expert model classifies 392 stroma samples correctly. This
+improvement is achieved by correcting many samples that were previously assigned
+to classes where our base model had trouble distinguishing from stroma and
+expert binary classifiers where introduced, showing that the expert-based
+correction strategy is effective in improving the stroma classification
+performance.
+
+Moreover, we can see that previously, 55 stroma samples were misclassified as
+debris, 73 as smooth muscle, and 48 as epithelium. In the final cancer expert 
+model, these numbers are reduced to 0, 11, and 7, respectively, while also
+keeping the misclassification of debris, smooth muscle, and epithelium as stroma
+low. This shows that the expert system is effective in correcting the specific
+confusion cases that were most relevant for improving stroma detection, without
+introducing many new errors in the opposite direction.
+
+This claim is further supported by the quantitative metrics, which can be seen 
+in [Figure TODO]. There we can see, that the cancer expert system improves over
+all measured metrics but epithilum recall. However, since we detect cancer by
+detecting both epithelium and stroma and the lower recall for epithelium is due
+to the fact that some epithelium samples are now misclassified as stroma, this
+is an acceptable trade-off.
+
+Furthermore, the cancer expert system improves the overall accuracy, reall and
+$F_2$ score in comparison to the baseline. Since the main goal is to reliably
+detect cancer, the most relevant improvement is the Cancer versus Rest recall
+where we improved by almost 10\% in comparison to the baseline. Since the $F_2$
+score also improved by roughly 6.5\%, this shows that the improvement in recall
+is not achieved at the cost of a large decrease in precision. Instead, the
+cancer expert system improves the balance between precision and recall for
+cancer-related tissue overall.
+
+This improvement is achieved by the large increase in stroma recall. The stroma
+recall increases by almost 40\%, while also improving the stroma $F_2$ score by
+roughly 32\%. It even achieves a slight improvement in epithelium recall by
+1.5\% and also improving the epithelium $F_2$ score by 1\%.
+
+Overall, the results support the proposed expert-based correction strategy. The
+base CNN already provides a useful general classifier, but its errors are not
+distributed evenly across classes. By focusing on the most relevant confusion
+cases and applying specialized binary experts, the final system substantially
+improves the recall-oriented cancer metrics. The cancer-expert system therefore
+achieves the main objective of this work.
