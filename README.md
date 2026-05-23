@@ -54,6 +54,19 @@ python src/cli/evaluate_final_models.py
 
 Outputs are written to `models/` and `results/`.
 
+## Project Structure
+
+```text
+.
+├── src/                  # Training, evaluation, data loading, and models
+│   └── cli/              # Command-line entry points
+├── results/              # Metrics, predictions, and confusion matrices
+├── models/               # Trained model checkpoints
+├── report/               # LaTeX report and report figures
+├── presentation/         # Beamer presentation and slides
+└── preview/              # Small LaTeX preview files
+```
+
 ## Models
 We have the following models:
 * Baseline ResNet50
