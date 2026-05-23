@@ -1,11 +1,10 @@
 \begin{frame}{Feature Visualization}
   \centering
   \includegraphics[width=0.90\textwidth]{figures/baseline224_cancer_feature_maps}
-  \vspace{0.4em}
-  \begin{itemize}
-    \item Epithelium activations become more localized in deeper layers.
-    \item Stroma activations stay more diffuse, suggesting a less stable representation.
-  \end{itemize}
+  % \begin{itemize}
+  %   \item Epithelium activations become more localized in deeper layers.
+  %   \item Stroma activations stay more diffuse, suggesting a less stable representation.
+  % \end{itemize}
 \end{frame}
 
 \begin{frame}{Grad-CAM Visualization}
@@ -21,7 +20,7 @@
   \centering
   \includegraphics[width=0.94\textwidth]{figures/baseline224_stroma_confidence_distributions}
   \vspace{0.1em}
-  \includegraphics[width=0.94\textwidth]{figures/baseline224_stroma_nonstroma_confidence_comparison}
+  \includegraphics[width=0.94\textwidth]{figures/baseline224_stroma_nonstroma_confidence_comparison_threshold}
   % \begin{itemize}
   %   \item Many true stroma false negatives have only moderate confidence.
   %   \item High-confidence non-stroma predictions can usually be kept.

@@ -7,6 +7,7 @@
   \begin{columns}[c,onlytextwidth]
     \begin{column}{0.50\textwidth}
       \centering
+      \uncover<1->{%
       \resizebox{\linewidth}{!}{%
       \begin{tabular}{lrrrr}
         \toprule
@@ -18,10 +19,11 @@
         \bottomrule
       \end{tabular}%
       }
+      }
     \end{column}
     \begin{column}{0.48\textwidth}
       \centering
-      \includegraphics[width=\textwidth]{figures/baseline224_confusion_matrix}
+      \uncover<2->{\includegraphics[width=\textwidth]{figures/baseline224_confusion_matrix}}
     \end{column}
   \end{columns}
 \end{frame}

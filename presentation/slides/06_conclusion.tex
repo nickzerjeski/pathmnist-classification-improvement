@@ -1,22 +1,22 @@
 \begin{frame}{Conclusion}
   \begin{itemize}
-    \item The base CNN is a useful general classifier but has a clear class-specific weakness.
-    \item Stroma false negatives concentrate in a small number of competing classes.
-    \item Confidence distributions make it possible to trigger correction selectively.
-    \item Binary expert classifiers substantially improve recall-oriented cancer metrics.
+    \item<1-> The base CNN is a useful general classifier but has a clear class-specific weakness.
+    \item<2-> Stroma false negatives concentrate in a small number of competing classes.
+    \item<3-> Confidence distributions make it possible to trigger correction selectively.
+    \item<4-> Binary expert classifiers substantially improve recall-oriented cancer metrics.
   \end{itemize}
-  \begin{block}{Takeaway}
+  \begin{block}<5->{Takeaway}
     Targeted expert correction can improve clinically relevant recall without sacrificing overall performance.
   \end{block}
 \end{frame}
 
 \begin{frame}{Limitations and Future Work}
   \begin{itemize}
-    \item The expert system is evaluated on PathMNIST only.
-    \item Expert thresholds are manually selected and should be tuned more systematically.
-    \item Hyperparameters for the basemodel and expert classifiers are not optimized.
-    \item The approach increases pipeline complexity compared with a single classifier.
-    \item Real-world applications use more sophisticated models, such as vision transformers.
+    \item<1-> The expert system is evaluated on PathMNIST only.
+    \item<2-> Expert thresholds are manually selected and should be tuned more systematically.
+    \item<3-> Hyperparameters for the basemodel and expert classifiers are not optimized.
+    \item<4-> The approach increases pipeline complexity compared with a single classifier.
+    \item<5-> Real-world applications use more sophisticated models, such as vision transformers.
   \end{itemize}
 \end{frame}
 
