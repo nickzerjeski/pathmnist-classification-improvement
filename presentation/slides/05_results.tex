@@ -1,57 +1,11 @@
 \begin{frame}{Confusion Matrix Comparison}
   \centering
-  \includegraphics[width=0.82\textwidth]{figures/resnet50_cancer_expert_confusion_matrix_comparison}
-  \vspace{0.2em}
-  \begin{itemize}
-    \item Correct stroma predictions increase from 229 to 392 out of 421.
-    \item Stroma misclassified as debris, smooth muscle, and epithelium is strongly reduced.
-  \end{itemize}
+  \includegraphics[width=0.90\textwidth]{figures/resnet50_cancer_expert_confusion_matrix_comparison}
 \end{frame}
 
 \begin{frame}{Metric Comparison}
   \centering
   \includegraphics[width=0.98\textwidth]{figures/results_metric_comparison}
-\end{frame}
-
-\begin{frame}{Main Quantitative Improvements}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.48\textwidth}
-      \begin{block}{Compared with the base model}
-        \begin{itemize}
-          \item Stroma recall: $0.520 \rightarrow 0.931$.
-          \item Stroma $F_2$: $0.569 \rightarrow 0.909$.
-          \item Cancer-vs-rest recall: $0.916 \rightarrow 0.980$.
-          \item Cancer-vs-rest $F_2$: $0.917 \rightarrow 0.965$.
-        \end{itemize}
-      \end{block}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \begin{block}{Trade-off}
-        Epithelium recall decreases slightly, but mainly because some epithelium samples are reassigned to stroma.
-      \end{block}
-      \begin{block}{Aggregate result}
-        Overall accuracy improves to $0.926$ and macro recall to $0.930$.
-      \end{block}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{Comparison to ResNet-50}
-  \begin{itemize}
-    \item ResNet-50 remains a strong external benchmark.
-    \item The Cancer Expert achieves the best target metrics:
-      \begin{itemize}
-        \item overall accuracy,
-        \item overall recall and $F_2$,
-        \item cancer-vs-rest recall and $F_2$,
-        \item stroma recall and stroma $F_2$.
-      \end{itemize}
-    \item The largest difference is stroma:
-      \begin{itemize}
-        \item ResNet-50 stroma recall: $0.544$.
-        \item Cancer Expert stroma recall: $0.931$.
-      \end{itemize}
-  \end{itemize}
 \end{frame}
 
 \section{Conclusion}
