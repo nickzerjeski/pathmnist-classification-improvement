@@ -28,7 +28,10 @@
   expertblock/.style={draw, rounded corners=2pt, align=center, minimum width=2.8cm, minimum height=0.8cm, fill=green!10},
   decisionblock/.style={draw, diamond, aspect=2.1, align=center, inner sep=1pt, fill=orange!12},
   arrow/.style={-{Latex[length=2.4mm]}, thick},
-  weakarrow/.style={-{Latex[length=2.4mm]}, thick, dashed, gray!60}
+  weakarrow/.style={-{Latex[length=2.4mm]}, thick, dashed, gray!60},
+  invisible/.style={opacity=0,text opacity=0},
+  alt/.code args={<#1>#2#3}{\alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}},
+  visible on/.style={alt={#1{}{invisible}}}
 }
 
 \begin{document}

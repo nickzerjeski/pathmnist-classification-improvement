@@ -47,24 +47,24 @@
 \node (input) at (-3.8,0) [box] {Sample $x$};
 
 % Upper path
-\node (base) at (0,1.4) [box] {Base model $\mathcal M_B$};
-\node (baseout) at (3.0,1.4) [output, minimum width=1.3cm] {$\hat y_B$};
-\node (decision) at (7.9,1.4) [decision]
+\node (base) at (0,1.4) [box, visible on=<2->] {Base model $\mathcal M_B$};
+\node (baseout) at (3.0,1.4) [output, minimum width=1.3cm, visible on=<3->] {$\hat y_B$};
+\node (decision) at (7.9,1.4) [decision, visible on=<4->]
 {$\hat y_B \in \mathrm{Experts},$\\[2pt]
 $p_B(\hat y_B \mid x) < \tau$};
 
-\node (finalbase) at (13.3,1.4) [output, minimum width=2.3cm]
+\node (finalbase) at (13.3,1.4) [output, minimum width=2.3cm, visible on=<5->]
 {$\hat y = \hat y_B$};
 
 % Lower path
-\node (expert) at (7.9,-1.4) [box, minimum width=2.9cm]
+\node (expert) at (7.9,-1.4) [box, minimum width=2.9cm, visible on=<6->]
 {Expert $\mathcal M_E$};
 
-\node (finalexpert) at (13.3,-1.4) [output, minimum width=2.3cm]
+\node (finalexpert) at (13.3,-1.4) [output, minimum width=2.3cm, visible on=<7->]
 {$\hat y = \hat y_E$};
 
 % Final output outside the system box
-\node (final) at (16.7,0) [output, minimum width=1.4cm]
+\node (final) at (16.7,0) [output, minimum width=1.4cm, visible on=<8->]
 {$\hat y$};
 
 % --------------------------------------------------
@@ -79,32 +79,32 @@ $p_B(\hat y_B \mid x) < \tau$};
 % --------------------------------------------------
 
 % Sample branching to both paths
-\draw[-, thick] (input.east) -- (inbranch);
-\draw[->, thick] (inbranch) |- (base.west);
-\draw[->, thick] (inbranch) |- (expert.west);
+\draw[-, thick, visible on=<2->] (input.east) -- (inbranch);
+\draw[->, thick, visible on=<2->] (inbranch) |- (base.west);
+\draw[->, thick, visible on=<6->] (inbranch) |- (expert.west);
 
 % Main upper path
-\draw[->, thick] (base) -- (baseout);
-\draw[->, thick] (baseout) -- (decision);
+\draw[->, thick, visible on=<3->] (base) -- (baseout);
+\draw[->, thick, visible on=<4->] (baseout) -- (decision);
 
 % Decision branches
-\draw[->, thick] (decision) -- node[above] {no} (finalbase);
-\draw[->, thick] (decision) -- node[right] {yes} (expert);
+\draw[->, thick, visible on=<5->] (decision) -- node[above] {no} (finalbase);
+\draw[->, thick, visible on=<6->] (decision) -- node[right] {yes} (expert);
 
 % Expert output
-\draw[->, thick] (expert) -- (finalexpert);
+\draw[->, thick, visible on=<7->] (expert) -- (finalexpert);
 
 % Merge both internal outputs into final output
-\draw[thick] (finalbase.east) -| (merge);
-\draw[thick] (finalexpert.east) -| (merge);
-\draw[->, thick] (merge) -- (final.west);
+\draw[thick, visible on=<8->] (finalbase.east) -| (merge);
+\draw[thick, visible on=<8->] (finalexpert.east) -| (merge);
+\draw[->, thick, visible on=<8->] (merge) -- (final.west);
 
 % --------------------------------------------------
 % Outer system box
 % --------------------------------------------------
 
-\node[outer, fit=(base)(baseout)(decision)(expert)(finalbase)(finalexpert)] (system) {};
-\node[anchor=south west, font=\bfseries] at (system.north west)
+\node[outer, fit=(base)(baseout)(decision)(expert)(finalbase)(finalexpert), visible on=<2->] (system) {};
+\node[anchor=south west, font=\bfseries, visible on=<2->] at (system.north west)
 {Cancer Expert};
 
 \end{tikzpicture}
