@@ -1,0 +1,112 @@
+\begin{figure}[htbp]
+\centering
+
+% ------------------------------------------------------------
+% Colors
+% ------------------------------------------------------------
+\definecolor{convfill}{RGB}{196,196,236}
+\definecolor{convdraw}{RGB}{35,50,210}
+\definecolor{poolfill}{RGB}{248,220,220}
+\definecolor{pooldraw}{RGB}{210,60,40}
+\definecolor{avgfill}{RGB}{255,240,210}
+\definecolor{avgdraw}{RGB}{210,130,30}
+\definecolor{fcfill}{RGB}{220,245,220}
+\definecolor{fcdraw}{RGB}{70,145,50}
+
+% ------------------------------------------------------------
+% 3D box
+% ------------------------------------------------------------
+\newcommand{\LayerBox}[9]{%
+\begin{scope}[shift={(#1,#2)}]
+    \def\W{#3}
+    \def\H{#4}
+    \def\D{#5}
+
+    \fill[#6] (0,0) rectangle (\W,\H);
+
+    \fill[#6!85!white]
+        (0,\H) -- (\D,\H+\D) -- (\W+\D,\H+\D) -- (\W,\H) -- cycle;
+
+    \fill[#6!75!black!10]
+        (\W,0) -- (\W+\D,\D) -- (\W+\D,\H+\D) -- (\W,\H) -- cycle;
+
+    \draw[#7, line width=0.8pt] (0,0) rectangle (\W,\H);
+    \draw[#7, line width=0.8pt]
+        (0,\H) -- (\D,\H+\D) -- (\W+\D,\H+\D) -- (\W,\H);
+    \draw[#7, line width=0.8pt]
+        (\W,0) -- (\W+\D,\D) -- (\W+\D,\H+\D) -- (\W,\H);
+
+    \node[font=\scriptsize, align=center] at (\W/2,-0.30) {#8};
+    \node[font=\scriptsize, align=center] at (\W/2,-0.68) {#9};
+\end{scope}
+}
+
+% ------------------------------------------------------------
+% Flat classifier box
+% ------------------------------------------------------------
+\newcommand{\FlatBox}[8]{%
+\begin{scope}[shift={(#1,#2)}]
+    \def\W{#3}
+    \def\H{#4}
+    \def\D{#5}
+
+    \fill[#6] (0,0) rectangle (\W,\H);
+
+    \fill[#6!85!white]
+        (0,\H) -- (\D,\H+\D) -- (\W+\D,\H+\D) -- (\W,\H) -- cycle;
+
+    \fill[#6!75!black!10]
+        (\W,0) -- (\W+\D,\D) -- (\W+\D,\H+\D) -- (\W,\H) -- cycle;
+
+    \draw[#7, line width=0.8pt] (0,0) rectangle (\W,\H);
+    \draw[#7, line width=0.8pt]
+        (0,\H) -- (\D,\H+\D) -- (\W+\D,\H+\D) -- (\W,\H);
+    \draw[#7, line width=0.8pt]
+        (\W,0) -- (\W+\D,\D) -- (\W+\D,\H+\D) -- (\W,\H);
+
+    \node[font=\scriptsize, align=center] at (\W/2,-0.32) {#8};
+\end{scope}
+}
+
+\begin{tikzpicture}[x=1cm,y=1cm, >={Latex[length=2mm]}]
+
+% Conv block 1
+\LayerBox{3.25}{1.35}{0.25}{4.00}{2.00}{convfill}{convdraw}{}{}
+\LayerBox{3.65}{1.35}{0.25}{4.00}{2.00}{convfill}{convdraw}{}{}
+
+% MaxPool 1
+\LayerBox{4.70}{2.70}{0.24}{2.00}{1.00}{poolfill}{pooldraw}
+  {Max\\Pool}{}
+
+% Conv block 2
+\LayerBox{5.10}{2.70}{0.50}{2.00}{1.00}{convfill}{convdraw}{}{}
+\LayerBox{5.75}{2.70}{0.50}{2.00}{1.00}{convfill}{convdraw}{}{}
+
+% MaxPool 2
+\LayerBox{6.60}{3.30}{0.50}{1.00}{0.50}{poolfill}{pooldraw}
+  {Max\\Pool}{}
+
+% Conv block 3
+\LayerBox{7.25}{3.30}{1.00}{1.00}{0.50}{convfill}{convdraw}{}{}
+
+% Adaptive average pooling
+\LayerBox{8.55}{3.85}{1.00}{0.20}{0.10}{avgfill}{avgdraw}
+  {Adaptive\\AvgPool}{}
+
+% Classifier head
+\draw[->, line width=0.8pt] (9.80,4.00) -- (10.30,4.00);
+
+\FlatBox{10.50}{3.85}{0.30}{0.22}{0.07}{fcfill}{fcdraw}
+  {Flatten+\\Dropout}
+
+\draw[->, line width=0.8pt] (11.40,4.00) -- (11.80,4.00);
+
+\FlatBox{11.95}{3.85}{0.30}{0.22}{0.07}{fcfill}{fcdraw}
+  {Classification}
+
+\end{tikzpicture}
+
+\caption{Architecture of the base model.}
+\label{fig:cnn-architecture}
+
+\end{figure}

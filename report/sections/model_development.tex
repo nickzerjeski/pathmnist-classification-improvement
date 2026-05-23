@@ -3,7 +3,7 @@
 After establishing the official MedMNIST ResNet-50 benchmark as an external
 reference point, the first model trained in this work is a custom small CNN
 trained from scratch which is used as a base model. Its architecture is shown
-in Figure~\ref{fig:baseline224-smallcnn-architecture}. It consists of five
+in Figure~\ref{fig:basemodel-architecture}. It consists of five
 $3 \times 3$ convolutional layers. The first two layers map the RGB input from
 three channels to 64 feature channels, followed by max pooling. The next two
 convolutions increase the representation to 128 channels, again followed by max
@@ -12,7 +12,7 @@ convolution is followed by batch normalization and a SiLU activation. The
 spatial feature map is then reduced by adaptive average pooling, followed by
 dropout with probability $0.2$ and a linear classifier for the nine PathMNIST
 classes. In total, the model has 558,921 trainable parameters.
-\input{figures/baseline224_smallcnn_architecture}
+\input{figures/basemodel_architecture}
 
 We choose this smaller architecture instead of a ResNet because a ResNet
 contains far more parameters and is more expensive to train on $224 \times 224$
@@ -22,7 +22,7 @@ to understand which visual structures are used for the cancer-related classes.
 The model therefore serves as a transparent base model before adding more
 specialized improvement strategies.
 
-\subsection{Base Model Performance}%TODO: Why these hyperparameters?
+\subsection{Base Model Performance}
 Our base model is trained on the $224 \times 224$ PathMNIST dataset for 10
 epochs with a batch size of 32. Optimization is performed with AdamW using a
 learning rate of $0.001$ and weight decay of $0.0001$. A cosine learning-rate
