@@ -119,9 +119,8 @@ distinguish stroma from the respective competing class: debris versus stroma,
 smooth muscle versus stroma, and epithelium versus stroma. These experts are
 only consulted when the base model predicts one of the competing classes with
 insufficient confidence lower than a threshold $\tau=0.9$. The resulting
-architecture is shown in Figure~\ref{fig:cancer-expert}.
-Each expert uses the same small CNN architecture as the base model, but with a
-binary output layer, in essence stroma vs. the competing class. Therefore, the
-expert classifiers are only trained on samples from its own two ground-truth
-classes.
+architecture is shown in Figure~\ref{fig:cancer-expert}. Each expert uses the
+same CNN architecture as the base model, but with a binary output layer, in
+essence stroma vs. the competing class. Therefore, the expert classifiers are
+only trained on samples from its own two ground-truth classes.
 \input{figures/cancer_expert}
