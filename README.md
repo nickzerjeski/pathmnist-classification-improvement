@@ -31,6 +31,29 @@ where the Cancer vs. Rest measurement is merging Stroma and Epithelium in one
 class and the other classes in another class. Stroma and Epithelium are the two
 cancer related classes.
 
+## Usage
+
+Install the project dependencies with:
+
+```bash
+pip install -e .
+```
+
+Train the base model with the default setup:
+
+```bash
+python src/cli/train_basemodel.py
+```
+
+Then train the cancer expert and regenerate the final comparison metrics:
+
+```bash
+python src/cli/train_cancer_expert.py
+python src/cli/evaluate_final_models.py
+```
+
+Outputs are written to `models/` and `results/`.
+
 ## Models
 We have the following models:
 * Baseline ResNet50
