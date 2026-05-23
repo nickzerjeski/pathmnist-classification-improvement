@@ -36,8 +36,13 @@ cancer related classes.
 Install the project dependencies with:
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate
 pip install -e .
 ```
+
+On the first run, PathMNIST is downloaded to `src/dataset/`, which can take a
+while.
 
 Train the base model with the default setup:
 
@@ -53,6 +58,9 @@ python src/cli/evaluate_final_models.py
 ```
 
 Outputs are written to `models/` and `results/`.
+
+To reduce the project size, `src/dataset/pathmnist_224.npz` and `.venv/` can be
+deleted and recreated when needed.
 
 ## Project Structure
 
