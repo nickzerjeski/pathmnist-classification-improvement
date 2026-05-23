@@ -1,0 +1,71 @@
+\begin{frame}{Reference and Base Model}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{External reference}
+        Official MedMNIST ResNet-50 benchmark at $28 \times 28$ resolution.
+      \end{block}
+      \begin{itemize}
+        \item Strong overall benchmark.
+        \item Used as an external comparison point.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Base model}
+        Custom CNN trained from scratch on $224 \times 224$ PathMNIST.
+      \end{block}
+      \begin{itemize}
+        \item 5 convolutional layers.
+        \item Batch normalization and SiLU activations.
+        \item 558,921 trainable parameters.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Base CNN Architecture}
+  \centering
+  \begin{tikzpicture}[node distance=0.55cm]
+    \node[modelblock] (input) {Input\\$224 \times 224 \times 3$};
+    \node[modelblock, right=of input] (conv1) {Conv block 1\\$3 \rightarrow 64 \rightarrow 64$};
+    \node[modelblock, right=of conv1] (pool1) {Max pool\\$112 \times 112$};
+    \node[modelblock, below=of pool1] (conv2) {Conv block 2\\$64 \rightarrow 128 \rightarrow 128$};
+    \node[modelblock, left=of conv2] (pool2) {Max pool\\$56 \times 56$};
+    \node[modelblock, left=of pool2] (conv3) {Conv block 3\\$128 \rightarrow 256$};
+    \node[modelblock, below=of conv3] (gap) {Adaptive\\average pool};
+    \node[modelblock, right=of gap] (head) {Dropout $0.2$\\Linear $256 \rightarrow 9$};
+
+    \draw[arrow] (input) -- (conv1);
+    \draw[arrow] (conv1) -- (pool1);
+    \draw[arrow] (pool1) -- (conv2);
+    \draw[arrow] (conv2) -- (pool2);
+    \draw[arrow] (pool2) -- (conv3);
+    \draw[arrow] (conv3) -- (gap);
+    \draw[arrow] (gap) -- (head);
+  \end{tikzpicture}
+  \vspace{0.5em}
+  \begin{itemize}
+    \item Trained for 10 epochs with AdamW, cosine learning-rate schedule, histology augmentation, label smoothing, and mixup.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Base Model Performance}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.50\textwidth}
+      \begin{itemize}
+        \item Overall accuracy: $0.906$.
+        \item Overall $F_2$: $0.885$.
+        \item Epithelium recall: $0.989$.
+        \item Stroma recall: only $0.520$.
+      \end{itemize}
+      \begin{block}{Main weakness}
+        Stroma is repeatedly confused with debris, smooth muscle, and epithelium.
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{figures/baseline224_confusion_matrix}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Diagnostics and Expert System}

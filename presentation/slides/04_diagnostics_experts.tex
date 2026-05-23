@@ -1,0 +1,70 @@
+\begin{frame}{Feature Visualization}
+  \centering
+  \includegraphics[width=0.90\textwidth]{figures/baseline224_cancer_feature_maps}
+  \vspace{0.4em}
+  \begin{itemize}
+    \item Epithelium activations become more localized in deeper layers.
+    \item Stroma activations stay more diffuse, suggesting a less stable representation.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Grad-CAM Interpretation}
+  \centering
+  \includegraphics[width=0.72\textwidth]{figures/baseline224_cancer_gradcam}
+  \vspace{0.3em}
+  \begin{itemize}
+    \item Stroma decisions are based on distributed texture-like regions.
+    \item Epithelium decisions are more localized around dense epithelial structures.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Confidence-Based Trigger}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{figures/baseline224_stroma_confidence_distributions}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Many true stroma false negatives have only moderate confidence.
+        \item High-confidence non-stroma predictions can usually be kept.
+        \item Low-confidence predictions are candidates for specialist correction.
+      \end{itemize}
+      \begin{block}{Trigger rule}
+        Consult an expert when the base model predicts a competing class with confidence below $\tau = 0.9$.
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Cancer Expert System}
+  \centering
+  \resizebox{0.96\textwidth}{!}{%
+  \begin{tikzpicture}[node distance=0.8cm]
+    \node[modelblock] (input) {PathMNIST\\image};
+    \node[modelblock, right=of input] (base) {Base CNN\\9 classes};
+    \node[decisionblock, right=of base, xshift=0.4cm] (trigger) {low\\confidence?};
+    \node[expertblock, above right=of trigger, xshift=0.2cm] (debris) {Debris\\vs. stroma};
+    \node[expertblock, right=of trigger, xshift=1.1cm] (muscle) {Smooth muscle\\vs. stroma};
+    \node[expertblock, below right=of trigger, xshift=0.2cm] (epi) {Epithelium\\vs. stroma};
+    \node[modelblock, right=of muscle, xshift=0.9cm] (final) {Corrected\\prediction};
+
+    \draw[arrow] (input) -- (base);
+    \draw[arrow] (base) -- (trigger);
+    \draw[arrow] (trigger) -- (debris);
+    \draw[arrow] (trigger) -- (muscle);
+    \draw[arrow] (trigger) -- (epi);
+    \draw[arrow] (debris) -- (final);
+    \draw[arrow] (muscle) -- (final);
+    \draw[arrow] (epi) -- (final);
+    \draw[weakarrow] (trigger) to[bend left=25] node[above, font=\scriptsize] {otherwise keep base prediction} (final);
+  \end{tikzpicture}%
+  }
+  \vspace{0.5em}
+  \begin{itemize}
+    \item Three binary experts target the dominant stroma confusion pairs.
+    \item Each expert uses the same CNN body with a binary output head.
+  \end{itemize}
+\end{frame}
+
+\section{Results}

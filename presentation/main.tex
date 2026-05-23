@@ -1,0 +1,43 @@
+\documentclass[aspectratio=169]{beamer}
+
+\usetheme{Rochester}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else
+  \usepackage{fontspec}
+\fi
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,calc}
+
+\title[PathMNIST Cancer Detection]{Improving Cancer-Related Tissue Classification\\ \large with Expert-Based Correction}
+\subtitle{PathMNIST Classification Improvement}
+\author{Nick Zerjeski}
+\institute{Free University of Bozen-Bolzano}
+\date{\today}
+
+\tikzset{
+  modelblock/.style={draw, rounded corners=2pt, align=center, minimum width=2.6cm, minimum height=0.8cm, fill=blue!8},
+  expertblock/.style={draw, rounded corners=2pt, align=center, minimum width=2.8cm, minimum height=0.8cm, fill=green!10},
+  decisionblock/.style={draw, diamond, aspect=2.1, align=center, inner sep=1pt, fill=orange!12},
+  arrow/.style={-{Latex[length=2.4mm]}, thick},
+  weakarrow/.style={-{Latex[length=2.4mm]}, thick, dashed, gray!60}
+}
+
+\begin{document}
+
+\input{slides/01_title_outline}
+\input{slides/02_motivation_dataset}
+\input{slides/03_model_development}
+\input{slides/04_diagnostics_experts}
+\input{slides/05_results}
+\input{slides/06_conclusion}
+
+\end{document}

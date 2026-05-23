@@ -1,0 +1,28 @@
+\begin{frame}{Conclusion}
+  \begin{itemize}
+    \item The base CNN is a useful general classifier but has a clear class-specific weakness.
+    \item Stroma false negatives concentrate in a small number of competing classes.
+    \item Confidence distributions make it possible to trigger correction selectively.
+    \item Binary expert classifiers substantially improve recall-oriented cancer metrics.
+  \end{itemize}
+  \begin{block}{Takeaway}
+    Targeted expert correction can improve clinically relevant recall without sacrificing overall performance.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Limitations and Future Work}
+  \begin{itemize}
+    \item The expert system is evaluated on PathMNIST only.
+    \item Expert thresholds are manually selected and should be tuned more systematically.
+    \item The approach increases pipeline complexity compared with a single classifier.
+    \item Future work: threshold calibration, external validation, and comparison with end-to-end ensemble methods.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Final Message}
+  \centering
+  \Large
+  The main improvement is not just higher accuracy.\\[0.8em]
+  \normalsize
+  It is a targeted reduction of cancer-related false negatives, especially for stroma.
+\end{frame}
