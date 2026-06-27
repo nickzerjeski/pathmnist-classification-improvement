@@ -112,3 +112,10 @@ Classes:
 | 6 | normal colon mucosa |
 | 7 | cancer-associated stroma |
 | 8 | colorectal adenocarcinoma epithelium |
+
+## Results
+
+The cancer expert improves the main cancer-oriented metrics compared with both
+the official ResNet50 reference and the custom base model.
+
+![Results](report/figures/results_metric_comparison.svg)
